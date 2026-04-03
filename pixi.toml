@@ -13,3 +13,5 @@ python = ">=3.12,<3.13"
 
 [pypi-dependencies]
 ipykernel = "*"
+matplotlib = "*"
+numpy = "*"
