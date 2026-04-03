@@ -1,5 +1,5 @@
 #+TITLE: MESA Basics
-#+AUT   HOR: Ethan
+#+AUTHOR: Ethan
 #+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output
 
 * Setup
