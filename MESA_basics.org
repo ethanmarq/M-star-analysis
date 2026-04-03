@@ -1,5 +1,5 @@
 #+TITLE: MESA Basics
-#+AUTHOR: Ethan
+#+AUT   HOR: Ethan
 #+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output
 
 * Setup
@@ -66,6 +66,7 @@ print(p.bulk_names)
 #+end_src
 
 #+RESULTS:
+: ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
 
 * Internal Structure (T-ρ Profile)
 #+begin_src jupyter-python
@@ -84,3 +85,4 @@ plt.show()
 #+end_src
 
 #+RESULTS:
+[[file:./.ob-jupyter/abca53eb549b8976efa8f90cdbe5776900819e51.png]]
