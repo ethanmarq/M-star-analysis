@@ -1,0 +1,86 @@
+#+TITLE: MESA Basics
+#+AUTHOR: Ethan
+#+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output
+
+* Setup
+#+begin_src jupyter-python :results silent
+import matplotlib.pyplot as plt
+import mesa_reader as mr
+import numpy as np
+#+end_src
+
+* Load History
+#+begin_src jupyter-python :results silent
+# Load your history file. Note directory location specified.
+h = mr.MesaData('./MESA-Web_Job_04012666280/trimmed_history.data')
+#+end_src
+
+* Hertzsprung-Russell Diagram
+#+begin_src jupyter-python
+plt.figure(figsize=(8, 6))
+plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2)
+
+plt.gca().invert_xaxis()  # Hotter stars on the left
+plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
+plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
+plt.title('Hertzsprung-Russell Diagram')
+plt.grid(True, linestyle='--', alpha=0.6)
+
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/6ab1203fbdc64884f4211bed1ff5252373127811.png]]
+
+* History Variable Names
+#+begin_src jupyter-python
+# What are the variable names in the history file?
+print(h.bulk_names)
+#+end_src
+
+#+RESULTS:
+: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
+
+* Load Profile Data
+
+** Fix: copy trimmed_history.data → history.data
+#+begin_src sh :results silent
+cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/history.data
+#+end_src
+
+** Load a specific model profile
+#+begin_src jupyter-python :results silent
+# Load the entire directory
+l = mr.MesaLogDir('./MESA-Web_Job_04012666280')
+
+# Select a specific profile:
+# Use l.profile_data() for the very last model,
+# or l.profile_data(model_number=100) for a specific step.
+p = l.profile_data(model_number=1000)
+#+end_src
+
+* Profile Variable Names
+#+begin_src jupyter-python
+# What are the variables in a profile file?
+print(p.bulk_names)
+#+end_src
+
+#+RESULTS:
+
+* Internal Structure (T-ρ Profile)
+#+begin_src jupyter-python
+plt.figure(figsize=(8, 6))
+
+# Plot logT vs logRho
+plt.plot(p.logRho, p.logT, color='black', label='Stellar Interior')
+
+plt.xlabel(r'$\log_{10}(\rho  [\rm{g\,cm}^{-3}])$')
+plt.ylabel(r'$\log_{10}(T  [\rm{K}])$')
+plt.title(f'Internal Structure (Model {p.model_number})')
+plt.grid(True, linestyle=':', alpha=0.7)
+
+plt.legend()
+plt.show()
+#+end_src
+
+#+RESULTS:
