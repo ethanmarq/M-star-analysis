@@ -22,3 +22,4 @@ htmlcov
 .pixi/*
 !.pixi/config.toml
 pixi.lock
+/.ob-jupyter/
