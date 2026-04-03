@@ -1,5 +1,6 @@
 # Useful Links
 [MESA-Web](http://user.astro.wisc.edu/~townsend/static.php?ref=mesa-web)
+[Pixi](https://pixi.prefix.dev/latest/)
 
 # Instructions
 Using only the history.data file for now, make a graph showing the evolution of your star on the theoretical Hertzsprung-Russell diagram (log-L vs. log-Teff). Also show on that diagram some version of the full zero-age main sequence of stars. You may lookup a theoretical line, calculate your own, or convert observed star values to these quantities. Cite any sources for this. 

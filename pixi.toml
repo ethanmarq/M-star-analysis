@@ -6,5 +6,10 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
+register-kernel = "python -m pykernel install --user --name astro-pixi --display-name 'Python (astro-pixi)'"
 
 [dependencies]
+python = ">=3.12,<3.13"
+
+[pypi-dependencies]
+ipykernel = "*"
