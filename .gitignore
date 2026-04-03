@@ -8,7 +8,13 @@ tmp/
 build
 htmlcov
 
-MESA-WEB*
+*/*.data
+*/*.txt
+*/*.mp4
+*/*.index
+*/inlist
+
+.ipynb_checkpoints
 
 *.zip
 
