@@ -7,30 +7,68 @@
 import matplotlib.pyplot as plt
 import mesa_reader as mr
 import numpy as np
+import pandas as pd
 #+end_src
 
 * Load History
 #+begin_src jupyter-python :results silent
 # Load your history file. Note directory location specified.
 h = mr.MesaData('./MESA-Web_Job_04012666280/trimmed_history.data')
+# https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+zams = pd.read_csv('mamajek_table.txt', sep='\\s+')
 #+end_src
+
+#+begin_src jupyter-python
+print(zams.columns)
+#+end_src
+
+#+RESULTS:
+: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
+:        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
+:        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
+:        'W1-W4', 'g-r', 'i-z', 'z-Y', 'Msun', '#SpT.1'],
+:       dtype='str')
+
+* Filters
+#+begin_src jupyter-python
+# HR mask for 12M_sun
+Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
+Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
+mask = Amask + Bmask
+
+# ZAMS
+zams = zams[zams['logL'] != '...']
+zams = zams[zams['logT'] != '...']
+zams['logL'] = zams['logL'].astype(float)
+zams['logT'] = zams['logT'].astype(float)
+#+end_src
+
+#+RESULTS:
 
 * Hertzsprung-Russell Diagram
 #+begin_src jupyter-python
 plt.figure(figsize=(8, 6))
-plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2)
+
+# ZAMS reference line
+plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1)
+
+# MESA output
+plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
+plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
+
 
 plt.gca().invert_xaxis()  # Hotter stars on the left
 plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
 plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
 plt.title('Hertzsprung-Russell Diagram')
+plt.legend()
 plt.grid(True, linestyle='--', alpha=0.6)
 
 plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/6ab1203fbdc64884f4211bed1ff5252373127811.png]]
+[[file:./.ob-jupyter/79251d1c9f36994687f4ca78a259eb0b3c9bafab.png]]
 
 * History Variable Names
 #+begin_src jupyter-python
