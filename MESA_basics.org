@@ -20,6 +20,7 @@ zams = pd.read_csv('mamajek_table.txt', sep='\\s+')
 
 #+begin_src jupyter-python
 print(h.bulk_names)
+print(zams.columns)
 #+end_src
 
 #+RESULTS:
