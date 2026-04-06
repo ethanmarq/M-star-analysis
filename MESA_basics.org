@@ -92,25 +92,34 @@ for sec_num, section in enumerate(sections):
 #+RESULTS:
 : ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
 
-* X by model_number profile plots
+* X by PROP profile plots
 #+begin_src jupyter-python
-MODEL_NUMBER = 1000
+profiles_of_interest = {
+    2: '50',
+    7: 'unkown',
+    9: 'unkown',
+    11: 'unkown',
+    14: 'unkown',
+    15: 'unkown',
+    17: 'unkown',
+    27: 'unkown',
+}
+
 PROP = 'mass'
-COLS = 4
-SECTION_SIZE = 20
+COLS = 6
+SECTION_SIZE = 60
 
-p = l.profile_data(model_number=MODEL_NUMBER) # Duplicate incase you want to modify MODEL_NUMBER
-bulk_names = list(p.bulk_names)
-bulk_names.remove(PROP)
+for prof_num, label in profiles_of_interest.items():
+    p = l.profile_data(profile_number=prof_num)
+    model_num = p.model_number
+    age = h.star_age[h.model_number == model_num][0]
 
-sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
-
-for sec_num, section in enumerate(sections):
-    rows = math.ceil(len(section) / COLS)
+    bulk_names = [n for n in p.bulk_names if n != PROP]
+    rows = math.ceil(len(bulk_names) / COLS)
     fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
     axes = axes.flatten()
 
-    for i, name in enumerate(section):
+    for i, name in enumerate(bulk_names):
         try:
             axes[i].plot(getattr(p, PROP), getattr(p, name), lw=1)
             axes[i].set_title(name, fontsize=8)
@@ -122,28 +131,26 @@ for sec_num, section in enumerate(sections):
     for j in range(len(section), len(axes)):
         axes[j].set_visible(False)
 
-    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
-    plt.tight_layout()
-#    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    fig.suptitle(
+        f'Profile {prof_num} | Model {model_num} | Age: {age:.3e} yr', fontsize=11
+    )
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+#   fig.savefig(f'profile_{prof_num:02d}_model_{model_num}.png', dpi=150, bbox_inches='tight')
     plt.show()
 #+end_src
 
 #+RESULTS:
 :RESULTS:
-[[file:./.ob-jupyter/40ea858d2bc8d679f0d412d412e7bcb05e080204.png]]
-[[file:./.ob-jupyter/6520bb4ac0977c22b37ed7dbcbac32fc0f3db803.png]]
-[[file:./.ob-jupyter/6b20c84f2fe9ed68130a6265e8ee5ba55e02b62b.png]]
+[[file:./.ob-jupyter/7c342f683e380c8ac09530946d27cb2a2494d76d.png]]
+[[file:./.ob-jupyter/ccc98d8e652bab0b1b6ec440d2983634e559580c.png]]
+[[file:./.ob-jupyter/b08abcacd140d54b6d5de2f62b1efcbfd5c298a1.png]]
+[[file:./.ob-jupyter/2fd66f44e27df8cf13e1c76f5dba0be9b2a1e2ad.png]]
+[[file:./.ob-jupyter/3006f77a979d55a9ef2f0fe8068647918f4a3795.png]]
+[[file:./.ob-jupyter/ca1f91b416b0b8a177c21169d8a8a6d4fbd6d4ce.png]]
+[[file:./.ob-jupyter/359a0e9575557846ede586253ae7e4b3df1d8cb1.png]]
+[[file:./.ob-jupyter/5314f0b783844b309ca5d8e04ae1f1594089c3a2.png]]
 :END:
 
-* Log Age by Log Luminosity
-#+begin_src jupyter-python
-fig, ax = plt.subplots()
-ax.plot(h.star_age, h.log_L)
-ax.set_xlabel('Age (years)')
-ax.set_ylabel('Log(L/L$_{\\odot}$)')
-ax.set_title('Luminosity Evolution')
-plt.show()
-#+end_src
 
 * Filters
 #+begin_src jupyter-python
@@ -172,6 +179,8 @@ plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)'
 plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
 plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
 
+# Interesting profiles.index (hold == 2)
+# Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
 
 plt.gca().invert_xaxis()  # Hotter stars on the left
 plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
@@ -183,20 +192,7 @@ plt.grid(True, linestyle='--', alpha=0.6)
 plt.show()
 #+end_src
 
-#+RESULTS:
-[[file:./.ob-jupyter/79251d1c9f36994687f4ca78a259eb0b3c9bafab.png]]
-
-* History Variable Names
-#+begin_src jupyter-python
-# What are the variable names in the history file?
-print(h.bulk_names)
-#+end_src
-
-#+RESULTS:
-: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
-
-
-* Internal Structure (T-ρ Profile)
+* (Profile) Internal Structure: Log T by log Rho
 #+begin_src jupyter-python
 plt.figure(figsize=(8, 6))
 
@@ -214,3 +210,12 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/abca53eb549b8976efa8f90cdbe5776900819e51.png]]
+* (History) Log Age by Log Luminosity
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.star_age, h.log_L)
+ax.set_xlabel('Age (years)')
+ax.set_ylabel('Log(L/L$_{\\odot}$)')
+ax.set_title('Luminosity Evolution')
+plt.show()
+#+end_src
