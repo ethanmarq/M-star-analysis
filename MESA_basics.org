@@ -3,6 +3,10 @@
 #+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output :async yes
 
 * Setup
+#+begin_src sh :results silent
+cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/history.data
+#+end_src
+
 #+begin_src jupyter-python :results silent
 import matplotlib.pyplot as plt
 import mesa_reader as mr
@@ -11,28 +15,38 @@ import pandas as pd
 import math
 #+end_src
 
-* Load History
+* Load History and Profile Data
 #+begin_src jupyter-python :results silent
 # Load your history file. Note directory location specified.
 h = mr.MesaData('./MESA-Web_Job_04012666280/trimmed_history.data')
 # https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
 zams = pd.read_csv('mamajek_table.txt', sep='\\s+')
+
+# Load the entire directory
+l = mr.MesaLogDir('./MESA-Web_Job_04012666280')
+
+# Select a specific profile:
+# Use l.profile_data() for the very last model,
+# or l.profile_data(model_number=100) for a specific step.
+p = l.profile_data(model_number=1000)
 #+end_src
 
 #+begin_src jupyter-python
-print(h.bulk_names)
-print(zams.columns)
+print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}\n\n specfiic profile columns {p.bulk_names}')
 #+end_src
 
 #+RESULTS:
-: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
-: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
+: history.profile columns: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
+:
+:  ZAMS columns: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
 :        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
 :        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
 :        'W1-W4', 'g-r', 'i-z', 'z-Y', 'Msun', '#SpT.1'],
 :       dtype='str')
+:
+:  specfiic profile columns ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
 
-* X by star_age plots
+* X by star_age history plots
 #+begin_src jupyter-python
 bulk_names = list(h.bulk_names)
 bulk_names.remove('star_age')
@@ -60,7 +74,7 @@ for sec_num, section in enumerate(sections):
 
     fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
     plt.tight_layout()
-    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+#    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 
@@ -72,6 +86,53 @@ for sec_num, section in enumerate(sections):
 [[file:./.ob-jupyter/d74e4738a41fbe7783be61d14a7d3ce197c43a48.png]]
 [[file:./.ob-jupyter/5cca0e3c56439eb481aad9b0418c1ad11970774d.png]]
 [[file:./.ob-jupyter/02dcf9bb22fd4bfb4ef9569c87452826d4c35293.png]]
+:END:
+
+
+#+RESULTS:
+: ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
+
+* X by model_number profile plots
+#+begin_src jupyter-python
+MODEL_NUMBER = 1000
+PROP = 'mass'
+COLS = 4
+SECTION_SIZE = 20
+
+p = l.profile_data(model_number=MODEL_NUMBER) # Duplicate incase you want to modify MODEL_NUMBER
+bulk_names = list(p.bulk_names)
+bulk_names.remove(PROP)
+
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(getattr(p, PROP), getattr(p, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel(PROP, fontsize=7)
+            axes[i].tick_params(labelsize=6)
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+#    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+[[file:./.ob-jupyter/40ea858d2bc8d679f0d412d412e7bcb05e080204.png]]
+[[file:./.ob-jupyter/6520bb4ac0977c22b37ed7dbcbac32fc0f3db803.png]]
+[[file:./.ob-jupyter/6b20c84f2fe9ed68130a6265e8ee5ba55e02b62b.png]]
 :END:
 
 * Log Age by Log Luminosity
@@ -134,32 +195,6 @@ print(h.bulk_names)
 #+RESULTS:
 : ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
 
-* Load Profile Data
-
-** Fix: copy trimmed_history.data → history.data
-#+begin_src sh :results silent
-cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/history.data
-#+end_src
-
-** Load a specific model profile
-#+begin_src jupyter-python :results silent
-# Load the entire directory
-l = mr.MesaLogDir('./MESA-Web_Job_04012666280')
-
-# Select a specific profile:
-# Use l.profile_data() for the very last model,
-# or l.profile_data(model_number=100) for a specific step.
-p = l.profile_data(model_number=1000)
-#+end_src
-
-* Profile Variable Names
-#+begin_src jupyter-python
-# What are the variables in a profile file?
-print(p.bulk_names)
-#+end_src
-
-#+RESULTS:
-: ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
 
 * Internal Structure (T-ρ Profile)
 #+begin_src jupyter-python
