@@ -37,7 +37,7 @@ print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}
 
 #+RESULTS:
 : history.profile columns: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
-:
+        :
 :  ZAMS columns: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
 :        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
 :        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
@@ -197,16 +197,32 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/abca53eb549b8976efa8f90cdbe5776900819e51.png]]
-* (History) Log Age by Log Luminosity
+* (History) Log Age by (Mass and Log_center_p) Luminosity
 #+begin_src jupyter-python
 fig, ax = plt.subplots()
-ax.plot(h.star_age, h.log_L)
+ax.plot(h.star_age, h.log_center_P)
 ax.set_xlabel('Age (years)')
 ax.set_ylabel('Log(Center P)')
 ax.set_title('Log Centeral Pressure by Age')
 plt.savefig('age_by_centerP.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/a812895e70f36bd02a486570d9f130aa1ace6f87.png]]
+
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.star_age, h.star_mass)
+ax.set_xlabel('Age (years)')
+ax.set_ylabel('mass')
+ax.set_title('Mass by Age')
+plt.savefig('age_by_mass.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/c7bec129ac492794425845ac120f09363fd43582.png]]
 
 * (History) Model Number by tri_alpa
 #+begin_src jupyter-python
@@ -369,6 +385,3 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 plt.savefig('Evolution.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
-
-#+RESULTS:
-[[file:./.ob-jupyter/aa635fb89790578e22a5f1e690814860980403fe.png]]
