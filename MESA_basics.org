@@ -60,8 +60,9 @@ for sec_num, section in enumerate(sections):
 
     fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
     plt.tight_layout()
-    plt.show()
     plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
 
 
 #+end_src
