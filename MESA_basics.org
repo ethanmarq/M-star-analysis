@@ -96,13 +96,13 @@ for sec_num, section in enumerate(sections):
 #+begin_src jupyter-python
 profiles_of_interest = {
     2: '50',
-    7: 'unkown',
-    9: 'unkown',
-    11: 'unkown',
-    14: 'unkown',
-    15: 'unkown',
-    17: 'unkown',
-    27: 'unkown',
+    7: '275',
+    9: '325',
+    11: '362',
+    14: '467',
+    15: '476',
+    17: '545',
+    27: '1000',
 }
 
 PROP = 'mass'
