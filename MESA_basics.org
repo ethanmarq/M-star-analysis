@@ -202,8 +202,9 @@ plt.show()
 fig, ax = plt.subplots()
 ax.plot(h.star_age, h.log_L)
 ax.set_xlabel('Age (years)')
-ax.set_ylabel('Log(L/L$_{\\odot}$)')
-ax.set_title('Luminosity Evolution')
+ax.set_ylabel('Log(Center P)')
+ax.set_title('Log Centeral Pressure by Age')
+plt.savefig('age_by_centerP.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
 
