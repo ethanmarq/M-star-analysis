@@ -95,18 +95,19 @@ for sec_num, section in enumerate(sections):
 * X by PROP profile plots
 #+begin_src jupyter-python
 profiles_of_interest = {
-    2: '50',
-    7: '275',
-    9: '325',
-    11: '362',
-    14: '467',
-    15: '476',
-    17: '545',
-    27: '1000',
+    1: '1', # Starting Point
+    2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
+    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
+    9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
+    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
+    14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
+    15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
+    17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
+    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
 }
 
 PROP = 'mass'
-COLS = 6
+COLS = 2
 SECTION_SIZE = 60
 
 for prof_num, label in profiles_of_interest.items():
@@ -134,64 +135,50 @@ for prof_num, label in profiles_of_interest.items():
     fig.suptitle(
         f'Profile {prof_num} | Model {model_num} | Age: {age:.3e} yr', fontsize=11
     )
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
 #   fig.savefig(f'profile_{prof_num:02d}_model_{model_num}.png', dpi=150, bbox_inches='tight')
     plt.show()
 #+end_src
 
-#+RESULTS:
-:RESULTS:
-[[file:./.ob-jupyter/7c342f683e380c8ac09530946d27cb2a2494d76d.png]]
-[[file:./.ob-jupyter/ccc98d8e652bab0b1b6ec440d2983634e559580c.png]]
-[[file:./.ob-jupyter/b08abcacd140d54b6d5de2f62b1efcbfd5c298a1.png]]
-[[file:./.ob-jupyter/2fd66f44e27df8cf13e1c76f5dba0be9b2a1e2ad.png]]
-[[file:./.ob-jupyter/3006f77a979d55a9ef2f0fe8068647918f4a3795.png]]
-[[file:./.ob-jupyter/ca1f91b416b0b8a177c21169d8a8a6d4fbd6d4ce.png]]
-[[file:./.ob-jupyter/359a0e9575557846ede586253ae7e4b3df1d8cb1.png]]
-[[file:./.ob-jupyter/5314f0b783844b309ca5d8e04ae1f1594089c3a2.png]]
-:END:
-
-
-* Filters
+* X by model_number history plots
 #+begin_src jupyter-python
-# HR mask for 12M_sun
-Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
-Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
-mask = Amask + Bmask
+bulk_names = list(h.bulk_names)
+bulk_names.remove('model_number')
 
-# ZAMS
-zams = zams[zams['logL'] != '...']
-zams = zams[zams['logT'] != '...']
-zams['logL'] = zams['logL'].astype(float)
-zams['logT'] = zams['logT'].astype(float)
+COLS = 10
+SECTION_SIZE = 60
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(h.model_number, getattr(h, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel('model_number', fontsize=7)
+            axes[i].tick_params(labelsize=6)
+            # Profiles of interests
+            for prof_num in profiles_of_interest:
+                p_temp = l.profile_data(profile_number=prof_num)
+                axes[i].axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+                axes[i].text(p_temp.model_number, axes[i].get_ylim()[1], str(prof_num), fontsize=7, color='red')
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+    plt.savefig(f'model_number_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
 #+end_src
 
 #+RESULTS:
-
-* Hertzsprung-Russell Diagram
-#+begin_src jupyter-python
-plt.figure(figsize=(8, 6))
-
-# ZAMS reference line
-plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1)
-
-# MESA output
-plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
-plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
-
-# Interesting profiles.index (hold == 2)
-# Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
-
-plt.gca().invert_xaxis()  # Hotter stars on the left
-plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
-plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
-plt.title('Hertzsprung-Russell Diagram')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.6)
-
-plt.show()
-#+end_src
-
+[[file:./.ob-jupyter/79d740a48669ed7444cbf8f6b477dd1a6794fbe2.png]]
 * (Profile) Internal Structure: Log T by log Rho
 #+begin_src jupyter-python
 plt.figure(figsize=(8, 6))
@@ -219,3 +206,128 @@ ax.set_ylabel('Log(L/L$_{\\odot}$)')
 ax.set_title('Luminosity Evolution')
 plt.show()
 #+end_src
+
+* (History) Model Number by tri_alpa
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.model_number, h.tri_alfa)
+ax.set_xlabel('model number')
+ax.set_ylabel('tri_alpa')
+ax.set_title('Triple-alpha burning rate over time')
+
+# Profiles of interests
+for prof_num in profiles_of_interest:
+    p_temp = l.profile_data(profile_number=prof_num)
+    ax.axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+    ax.text(p_temp.model_number, ax.get_ylim()[1], str(prof_num), fontsize=7, color='red')
+
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/54d5608414e2c6050ee2ecdd051262d1c7e953d3.png]]
+
+* (History) Model Number by pp
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.model_number, h.pp)
+ax.set_xlabel('model number')
+ax.set_ylabel('pp')
+ax.set_title('pp burning rate over time')
+
+# Profiles of interests
+for prof_num in profiles_of_interest:
+    p_temp = l.profile_data(profile_number=prof_num)
+    ax.axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+    ax.text(p_temp.model_number, ax.get_ylim()[1], str(prof_num), fontsize=7, color='red')
+
+plt.tight_layout(rect=[0, 0, 1, 0.97])
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/8c40bf63b30f9bde3495fd6781d7a504edd23914.png]]
+* Filters
+#+begin_src jupyter-python
+# HR mask for 12M_sun
+Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
+Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
+mask = Amask + Bmask
+
+# ZAMS
+zams = zams[zams['logL'] != '...']
+zams = zams[zams['logT'] != '...']
+zams['logL'] = zams['logL'].astype(float)
+zams['logT'] = zams['logT'].astype(float)
+#+end_src
+
+#+RESULTS:
+
+* Hertzsprung-Russell Diagram
+#+begin_src jupyter-python
+plt.figure(figsize=(16, 12))
+
+# ZAMS reference line
+plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1)
+
+# MESA output
+plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
+plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
+
+# Interesting profiles.index (hold == 2)
+# Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
+# Label profiles of interest
+short_labels = {
+    1: 'Start',
+    2: 'Contraction',
+    7: 'TAMS',
+    9: 'RGB base',
+    11: 'TAHB',
+    14: 'AGB begin',
+    15: 'TP-AGB',
+    17: 'Late AGB',
+    27: 'Core Collapse',
+}
+
+offsets = {
+    1:  (6, -15),
+    2:  (-30, -25),
+    7:  (-50, -15),
+    9:  (6, -15),
+    11: (-65, 15),
+    14: (30, -20),
+    15: (30, 0),
+    17: (30, 20),
+    27: (-70, 20),
+}
+for prof_num, model_str in profiles_of_interest.items():
+    model_num = int(model_str)
+    idx = np.where(h.model_number == model_num)[0]
+    if len(idx) == 0:
+        continue
+    idx = idx[0]
+    x = h.log_Teff[idx]
+    y = h.log_L[idx]
+    plt.scatter(x, y, color='red', s=10, zorder=5)
+    plt.annotate(
+        short_labels[prof_num],
+        xy=(x, y),
+        xytext=offsets[prof_num],
+        textcoords='offset points',
+        fontsize=7,
+        arrowprops=dict(arrowstyle='-', color='gray', lw=0.5)
+    )
+
+plt.gca().invert_xaxis()  # Hotter stars on the left
+plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
+plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
+plt.title('Hertzsprung-Russell Diagram')
+plt.legend()
+plt.grid(True, linestyle='--', alpha=0.6)
+
+plt.savefig('hr_diagram.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/3c3068c7835797f61d9e2c30d3b0d67f6e69016a.png]]
