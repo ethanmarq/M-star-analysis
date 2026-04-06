@@ -70,11 +70,8 @@ for sec_num, section in enumerate(sections):
 #+RESULTS:
 :RESULTS:
 [[file:./.ob-jupyter/d74e4738a41fbe7783be61d14a7d3ce197c43a48.png]]
-: <Figure size 640x480 with 0 Axes>
 [[file:./.ob-jupyter/5cca0e3c56439eb481aad9b0418c1ad11970774d.png]]
-: <Figure size 640x480 with 0 Axes>
 [[file:./.ob-jupyter/02dcf9bb22fd4bfb4ef9569c87452826d4c35293.png]]
-: <Figure size 640x480 with 0 Axes>
 :END:
 
 * Log Age by Log Luminosity
