@@ -1,6 +1,6 @@
 #+TITLE: MESA Basics
 #+AUTHOR: Ethan
-#+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output
+#+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output :async yes
 
 * Setup
 #+begin_src jupyter-python :results silent
@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import mesa_reader as mr
 import numpy as np
 import pandas as pd
+import math
 #+end_src
 
 * Load History
@@ -24,11 +25,66 @@ print(zams.columns)
 #+end_src
 
 #+RESULTS:
+: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
 : Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
 :        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
 :        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
 :        'W1-W4', 'g-r', 'i-z', 'z-Y', 'Msun', '#SpT.1'],
 :       dtype='str')
+
+* X by star_age plots
+#+begin_src jupyter-python
+bulk_names = list(h.bulk_names)
+bulk_names.remove('star_age')
+
+COLS = 4
+SECTION_SIZE = 20
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(h.star_age, getattr(h, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel('Age (log yr)', fontsize=7)
+            axes[i].tick_params(labelsize=6)
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+
+
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+[[file:./.ob-jupyter/d74e4738a41fbe7783be61d14a7d3ce197c43a48.png]]
+: <Figure size 640x480 with 0 Axes>
+[[file:./.ob-jupyter/5cca0e3c56439eb481aad9b0418c1ad11970774d.png]]
+: <Figure size 640x480 with 0 Axes>
+[[file:./.ob-jupyter/02dcf9bb22fd4bfb4ef9569c87452826d4c35293.png]]
+: <Figure size 640x480 with 0 Axes>
+:END:
+
+* Log Age by Log Luminosity
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.star_age, h.log_L)
+ax.set_xlabel('Age (years)')
+ax.set_ylabel('Log(L/L$_{\\odot}$)')
+ax.set_title('Luminosity Evolution')
+plt.show()
+#+end_src
 
 * Filters
 #+begin_src jupyter-python
