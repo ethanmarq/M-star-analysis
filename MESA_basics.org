@@ -208,9 +208,6 @@ plt.savefig('age_by_centerP.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
 
-#+RESULTS:
-[[file:./.ob-jupyter/a812895e70f36bd02a486570d9f130aa1ace6f87.png]]
-
 #+begin_src jupyter-python
 fig, ax = plt.subplots()
 ax.plot(h.star_age, h.star_mass)
