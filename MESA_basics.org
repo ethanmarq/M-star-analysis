@@ -140,6 +140,19 @@ for prof_num, label in profiles_of_interest.items():
     plt.show()
 #+end_src
 
+#+RESULTS:
+:RESULTS:
+[[file:./.ob-jupyter/22c04f93b7abf1b363cdd6c2f5951a52bbc80104.png]]
+[[file:./.ob-jupyter/5338af8ee7735899b8b81b181fc5cfe68cc998e0.png]]
+[[file:./.ob-jupyter/fb789d2e76c92aeafa7a2e948a8a707cc1a51d0a.png]]
+[[file:./.ob-jupyter/f619b6bb1921b5afced2ec0869a5fa3f26944d4b.png]]
+[[file:./.ob-jupyter/0449a402941ccdd79c40c33624719725264ce706.png]]
+[[file:./.ob-jupyter/381ea089b1f0872fb4c9bdc88918427fb24262db.png]]
+[[file:./.ob-jupyter/8a1de90f0426c8191cb7a3e8e41b1f3f66fcac1f.png]]
+[[file:./.ob-jupyter/f8e3262c1b9002dee8b67ef6166617c56895b304.png]]
+[[file:./.ob-jupyter/7ab4fa7a4cbdbbc92661533fc4209b9e0a727864.png]]
+:END:
+
 * X by model_number history plots
 #+begin_src jupyter-python
 bulk_names = list(h.bulk_names)
@@ -286,32 +299,44 @@ plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)'
 
 # MESA output
 plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
-plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
+#plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
 
+#
+profiles_of_interest = {
+    1: '1', # Starting Point
+    #2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
+    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
+    #9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
+    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
+    #14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
+    #15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
+    #17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
+    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
+}
 # Interesting profiles.index (hold == 2)
 # Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
 # Label profiles of interest
 short_labels = {
-    1: 'Start',
-    2: 'Contraction',
-    7: 'TAMS',
-    9: 'RGB base',
-    11: 'TAHB',
-    14: 'AGB begin',
-    15: 'TP-AGB',
-    17: 'Late AGB',
+    1: 'Start/Contraction',
+    #2: '',
+    7: 'Main Sequence',
+    #9: '',
+    11: 'TAMS',
+    #14: '',
+    #15: '',
+    #17: '',
     27: 'Core Collapse',
 }
 
 offsets = {
     1:  (6, -15),
-    2:  (-30, -25),
+    #2:  (-30, -25),
     7:  (-50, -15),
-    9:  (6, -15),
+    #9:  (6, -15),
     11: (-65, 15),
-    14: (30, -20),
-    15: (30, 0),
-    17: (30, 20),
+    #14: (30, -20),
+    #15: (30, 0),
+    #17: (30, 20),
     27: (-70, 20),
 }
 for prof_num, model_str in profiles_of_interest.items():
@@ -344,7 +369,8 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/3c3068c7835797f61d9e2c30d3b0d67f6e69016a.png]]
+[[file:./.ob-jupyter/0ed9e2b8cddfc3ee2dd9b998132daaeae2a12cf5.png]]
+
 * Nuclear burning and Central temperature history
 #+begin_src jupyter-python
 fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
