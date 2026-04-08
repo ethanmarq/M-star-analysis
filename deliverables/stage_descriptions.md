@@ -40,3 +40,6 @@ Core begins to deviate between radiation pressure, and carbon and oxygen burning
 
 
 The star has a much shorter lifetime than smaller stars as it's core burns fuel much quicker. The core is able to get hot enough to burn and form iron, which leads to the ultimate collapse of the star and supernova.
+
+
+HR Theoritcal Line Cite: https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
