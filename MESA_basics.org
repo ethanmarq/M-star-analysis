@@ -1,0 +1,410 @@
+#+TITLE: MESA Basics
+#+AUTHOR: Ethan
+#+PROPERTY: header-args:jupyter-python :session main :kernel astro-pixi :results output :async yes
+
+* Setup
+#+begin_src sh :results silent
+cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/history.data
+#+end_src
+
+#+begin_src jupyter-python :results silent
+import matplotlib.pyplot as plt
+import mesa_reader as mr
+import numpy as np
+import pandas as pd
+import math
+#+end_src
+
+* Load History and Profile Data
+#+begin_src jupyter-python :results silent
+# Load your history file. Note directory location specified.
+h = mr.MesaData('./MESA-Web_Job_04012666280/trimmed_history.data')
+# https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+zams = pd.read_csv('mamajek_table.txt', sep='\\s+')
+
+# Load the entire directory
+l = mr.MesaLogDir('./MESA-Web_Job_04012666280')
+
+# Select a specific profile:
+# Use l.profile_data() for the very last model,
+# or l.profile_data(model_number=100) for a specific step.
+p = l.profile_data(model_number=1000)
+#+end_src
+
+#+begin_src jupyter-python
+print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}\n\n specfiic profile columns {p.bulk_names}')
+#+end_src
+
+#+RESULTS:
+: history.profile columns: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
+        :
+:  ZAMS columns: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
+:        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
+:        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
+:        'W1-W4', 'g-r', 'i-z', 'z-Y', 'Msun', '#SpT.1'],
+:       dtype='str')
+:
+:  specfiic profile columns ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
+
+* X by star_age history plots
+#+begin_src jupyter-python
+bulk_names = list(h.bulk_names)
+bulk_names.remove('star_age')
+
+COLS = 4
+SECTION_SIZE = 20
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(h.star_age, getattr(h, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel('Age (log yr)', fontsize=7)
+            axes[i].tick_params(labelsize=6)
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+#    plt.savefig(f'history_section_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+
+
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+[[file:./.ob-jupyter/d74e4738a41fbe7783be61d14a7d3ce197c43a48.png]]
+[[file:./.ob-jupyter/5cca0e3c56439eb481aad9b0418c1ad11970774d.png]]
+[[file:./.ob-jupyter/02dcf9bb22fd4bfb4ef9569c87452826d4c35293.png]]
+:END:
+
+
+#+RESULTS:
+: ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
+
+* X by PROP profile plots
+#+begin_src jupyter-python
+profiles_of_interest = {
+    1: '1', # Starting Point
+    2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
+    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
+    9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
+    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
+    14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
+    15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
+    17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
+    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
+}
+
+PROP = 'mass'
+COLS = 2
+SECTION_SIZE = 60
+
+for prof_num, label in profiles_of_interest.items():
+    p = l.profile_data(profile_number=prof_num)
+    model_num = p.model_number
+    age = h.star_age[h.model_number == model_num][0]
+
+    bulk_names = [n for n in p.bulk_names if n != PROP]
+    rows = math.ceil(len(bulk_names) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(bulk_names):
+        try:
+            axes[i].plot(getattr(p, PROP), getattr(p, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel(PROP, fontsize=7)
+            axes[i].tick_params(labelsize=6)
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(
+        f'Profile {prof_num} | Model {model_num} | Age: {age:.3e} yr', fontsize=11
+    )
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
+#   fig.savefig(f'profile_{prof_num:02d}_model_{model_num}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+[[file:./.ob-jupyter/22c04f93b7abf1b363cdd6c2f5951a52bbc80104.png]]
+[[file:./.ob-jupyter/5338af8ee7735899b8b81b181fc5cfe68cc998e0.png]]
+[[file:./.ob-jupyter/fb789d2e76c92aeafa7a2e948a8a707cc1a51d0a.png]]
+[[file:./.ob-jupyter/f619b6bb1921b5afced2ec0869a5fa3f26944d4b.png]]
+[[file:./.ob-jupyter/0449a402941ccdd79c40c33624719725264ce706.png]]
+[[file:./.ob-jupyter/381ea089b1f0872fb4c9bdc88918427fb24262db.png]]
+[[file:./.ob-jupyter/8a1de90f0426c8191cb7a3e8e41b1f3f66fcac1f.png]]
+[[file:./.ob-jupyter/f8e3262c1b9002dee8b67ef6166617c56895b304.png]]
+[[file:./.ob-jupyter/7ab4fa7a4cbdbbc92661533fc4209b9e0a727864.png]]
+:END:
+
+* X by model_number history plots
+#+begin_src jupyter-python
+bulk_names = list(h.bulk_names)
+bulk_names.remove('model_number')
+
+COLS = 10
+SECTION_SIZE = 60
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(h.model_number, getattr(h, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel('model_number', fontsize=7)
+            axes[i].tick_params(labelsize=6)
+            # Profiles of interests
+            for prof_num in profiles_of_interest:
+                p_temp = l.profile_data(profile_number=prof_num)
+                axes[i].axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+                axes[i].text(p_temp.model_number, axes[i].get_ylim()[1], str(prof_num), fontsize=7, color='red')
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+    plt.savefig(f'model_number_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/79d740a48669ed7444cbf8f6b477dd1a6794fbe2.png]]
+* (Profile) Internal Structure: Log T by log Rho
+#+begin_src jupyter-python
+plt.figure(figsize=(8, 6))
+
+# Plot logT vs logRho
+plt.plot(p.logRho, p.logT, color='black', label='Stellar Interior')
+
+plt.xlabel(r'$\log_{10}(\rho  [\rm{g\,cm}^{-3}])$')
+plt.ylabel(r'$\log_{10}(T  [\rm{K}])$')
+plt.title(f'Internal Structure (Model {p.model_number})')
+plt.grid(True, linestyle=':', alpha=0.7)
+
+plt.legend()
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/abca53eb549b8976efa8f90cdbe5776900819e51.png]]
+* (History) Log Age by (Mass and Log_center_p) Luminosity
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.star_age, h.log_center_P)
+ax.set_xlabel('Age (years)')
+ax.set_ylabel('Log(Center P)')
+ax.set_title('Log Centeral Pressure by Age')
+plt.savefig('age_by_centerP.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.star_age, h.star_mass)
+ax.set_xlabel('Age (years)')
+ax.set_ylabel('mass')
+ax.set_title('Mass by Age')
+plt.savefig('age_by_mass.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/c7bec129ac492794425845ac120f09363fd43582.png]]
+
+* (History) Model Number by tri_alpa
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.model_number, h.tri_alfa)
+ax.set_xlabel('model number')
+ax.set_ylabel('tri_alpa')
+ax.set_title('Triple-alpha burning rate over time')
+
+# Profiles of interests
+for prof_num in profiles_of_interest:
+    p_temp = l.profile_data(profile_number=prof_num)
+    ax.axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+    ax.text(p_temp.model_number, ax.get_ylim()[1], str(prof_num), fontsize=7, color='red')
+
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/54d5608414e2c6050ee2ecdd051262d1c7e953d3.png]]
+
+* (History) Model Number by pp
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.model_number, h.pp)
+ax.set_xlabel('model number')
+ax.set_ylabel('pp')
+ax.set_title('pp burning rate over time')
+
+# Profiles of interests
+for prof_num in profiles_of_interest:
+    p_temp = l.profile_data(profile_number=prof_num)
+    ax.axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+    ax.text(p_temp.model_number, ax.get_ylim()[1], str(prof_num), fontsize=7, color='red')
+
+plt.tight_layout(rect=[0, 0, 1, 0.97])
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/8c40bf63b30f9bde3495fd6781d7a504edd23914.png]]
+* Filters
+#+begin_src jupyter-python
+# HR mask for 12M_sun
+Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
+Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
+mask = Amask + Bmask
+
+# ZAMS
+zams = zams[zams['logL'] != '...']
+zams = zams[zams['logT'] != '...']
+zams['logL'] = zams['logL'].astype(float)
+zams['logT'] = zams['logT'].astype(float)
+#+end_src
+
+#+RESULTS:
+
+* Hertzsprung-Russell Diagram
+#+begin_src jupyter-python
+plt.figure(figsize=(16, 12))
+
+# ZAMS reference line
+plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1)
+
+# MESA output
+plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
+#plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
+
+#
+profiles_of_interest = {
+    1: '1', # Starting Point
+    #2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
+    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
+    #9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
+    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
+    #14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
+    #15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
+    #17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
+    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
+}
+# Interesting profiles.index (hold == 2)
+# Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
+# Label profiles of interest
+short_labels = {
+    1: 'Start/Contraction',
+    #2: '',
+    7: 'Main Sequence',
+    #9: '',
+    11: 'TAMS',
+    #14: '',
+    #15: '',
+    #17: '',
+    27: 'Core Collapse',
+}
+
+offsets = {
+    1:  (6, -15),
+    #2:  (-30, -25),
+    7:  (-50, -15),
+    #9:  (6, -15),
+    11: (-65, 15),
+    #14: (30, -20),
+    #15: (30, 0),
+    #17: (30, 20),
+    27: (-70, 20),
+}
+for prof_num, model_str in profiles_of_interest.items():
+    model_num = int(model_str)
+    idx = np.where(h.model_number == model_num)[0]
+    if len(idx) == 0:
+        continue
+    idx = idx[0]
+    x = h.log_Teff[idx]
+    y = h.log_L[idx]
+    plt.scatter(x, y, color='red', s=10, zorder=5)
+    plt.annotate(
+        short_labels[prof_num],
+        xy=(x, y),
+        xytext=offsets[prof_num],
+        textcoords='offset points',
+        fontsize=7,
+        arrowprops=dict(arrowstyle='-', color='gray', lw=0.5)
+    )
+
+plt.gca().invert_xaxis()  # Hotter stars on the left
+plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
+plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
+plt.title('Hertzsprung-Russell Diagram')
+plt.legend()
+plt.grid(True, linestyle='--', alpha=0.6)
+
+plt.savefig('hr_diagram.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/0ed9e2b8cddfc3ee2dd9b998132daaeae2a12cf5.png]]
+
+* Nuclear burning and Central temperature history
+#+begin_src jupyter-python
+fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
+# Mass fractions
+axes[0].plot(h.model_number, h.center_h1, label='center_h1', lw=1.5)
+axes[0].plot(h.model_number, h.center_he4, label='center_he4', lw=1.5)
+axes[0].set_ylabel('Mass Fraction')
+axes[0].set_title('Core Composition')
+axes[0].legend(fontsize=8)
+axes[0].grid(True, linestyle='--', alpha=0.5)
+
+# Nuclear Burning
+axes[1].plot(h.model_number, h.cno, label='cno', lw=1.5)
+axes[1].plot(h.model_number, h.tri_alfa, label='tri_alfa', lw=1.5)
+axes[1].set_ylabel('log Burning Rate')
+axes[1].set_title('Nuclear Burning Rates')
+axes[1].legend(fontsize=8)
+axes[1].grid(True, linestyle='--', alpha=0.5)
+
+# Central Temperature
+axes[2].plot(h.model_number, h.log_center_T, color='black', lw=1.5)
+axes[2].set_ylabel('log_center_T')
+axes[2].set_title('Central Temperature Evolution')
+axes[2].grid(True, linestyle='--', alpha=0.5)
+
+# Interesting Model Numbers
+for prof_num, model_str in profiles_of_interest.items():
+    for ax in axes:
+        ax.axvline(int(model_str), color='red', alpha=0.5, lw=1)
+        ax.text(int(model_str), ax.get_ylim()[1], str(prof_num), fontsize=7, color='red', ha='center')
+
+axes[2].set_xlabel('Model Number')
+fig.suptitle('Evolution', fontsize=12)
+plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.savefig('Evolution.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
