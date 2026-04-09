@@ -95,15 +95,15 @@ for sec_num, section in enumerate(sections):
 * X by PROP profile plots
 #+begin_src jupyter-python
 profiles_of_interest = {
-    1: '1', # Starting Point
-    2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
-    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
-    9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
-    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
-    14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
-    15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
-    17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
-    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
+    1: '1',
+    2: '50',
+    7: '275',
+    9: '325',
+    11: '362',
+    14: '467',
+    15: '476',
+    17: '545',
+    27: '1000',
 }
 
 PROP = 'mass'
@@ -303,15 +303,10 @@ plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
 
 #
 profiles_of_interest = {
-    1: '1', # Starting Point
-    #2: '50', # log_L log_R log_center_T log_center_Rho log_center_P center_entropy dynamic_timescale kh_timescale nuc_timescale pp log_LH log_Lneu: Gravitational Contraciton, pp, CNO ramping up
-    7: '275', # kh_timescale peak, log_R infleciton point: peak CNO, TAMS (Terminal Age Main Sequence)
-    #9: '325', # he_core_mass peak, log_R increasing, kh_timescale dropping rapidly: Shell CNO, Base of red giant branch
-    11: '362', # center_He4 reaches 0, center_ye hits min at .5, center_entropy stops dropping, becomes constant at 8, compactness_parameter inflection point - starts droping, nuc_timescale inflection point - starts increasing for 50 models, tri_alfa significantly increases towards 0, log_LHe significantly increases towards 0: TAHB (Terminal Age Helium Burning)
-    #14: '467', # Star_mass starts dropping, log_L starts decreasing, log_R starts decreasing, center_he4 starts dropping fast, center_c12 starts increasing rapidly, center_n14 drops very fast, center_entropy begins to slowly drop, compactness_parameter increases significantly, dynamic_timescale inflecitn point - starts decreasing, tri_alfa reaches constant at 0, he_core_mass slope increases: He shell ignition, Asymtopic Giant Branch begin (AGB)
-    #15: '476', # log_LH infleciton point from neg to pos slope: Early-AGB to Thermally Pulsing-AGB transition
-    #17: '545', # center_c12 starts to increase significantly, center_o16 starts to increase significantly, compactness_parameter slope decreases but is still pos: late AGB, C/O core buildling
-    27: '1000', # sharp log_Teff jump, sharp log_L jump, middle of strong center_degeneracy slope increase to 85, compactnes_parameter reaching 0, log_LH occiliations before extreme sharp jump, cno pp occilations, right before dynamic_timescale sharp down and up jump, o_core_mass reaches maximum, he_core_radius increasing rapidly: Onset of core collapse
+    1: '1',
+    7: '275',
+    11: '362',
+    27: '1000',
 }
 # Interesting profiles.index (hold == 2)
 # Model Numbers: 2, 7, 9, 11, 14, 15, 17, 27
