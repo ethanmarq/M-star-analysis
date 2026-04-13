@@ -1,0 +1,3 @@
+[submodule "mkipp"]
+	path = mkipp
+	url = https://github.com/orlox/mkipp.git
