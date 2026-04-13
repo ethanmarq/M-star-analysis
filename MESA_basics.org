@@ -853,12 +853,12 @@ plt.show()
 :RESULTS:
 : <>:37: SyntaxWarning: invalid escape sequence '\o'
 : <>:37: SyntaxWarning: invalid escape sequence '\o'
-: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/566026867.py:37: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1786612042.py:37: SyntaxWarning: invalid escape sequence '\o'
 :   ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
 : ./MESA-Web_Job_04012666280 ['./MESA-Web_Job_04012666280']
 : Reading profile data
 : Reading history data
 : Constructing mixing regions
-: there are 0 mixing zonesj
+: there are 0 mixing zones
 [[file:./.ob-jupyter/e8bab427ff6f51d01455157c012d128f64540885.png]]
 :END:
