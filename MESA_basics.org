@@ -9,6 +9,7 @@ cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/histor
 
 #+begin_src jupyter-python :results silent
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import mesa_reader as mr
 import numpy as np
 import pandas as pd
@@ -37,7 +38,7 @@ print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}
 
 #+RESULTS:
 : history.profile columns: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
-        :
+:
 :  ZAMS columns: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
 :        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
 :        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
@@ -52,7 +53,7 @@ bulk_names = list(h.bulk_names)
 bulk_names.remove('star_age')
 
 COLS = 4
-SECTION_SIZE = 20
+SECTION_SIZE = 60
 sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
 
 for sec_num, section in enumerate(sections):
@@ -82,15 +83,7 @@ for sec_num, section in enumerate(sections):
 #+end_src
 
 #+RESULTS:
-:RESULTS:
-[[file:./.ob-jupyter/d74e4738a41fbe7783be61d14a7d3ce197c43a48.png]]
-[[file:./.ob-jupyter/5cca0e3c56439eb481aad9b0418c1ad11970774d.png]]
-[[file:./.ob-jupyter/02dcf9bb22fd4bfb4ef9569c87452826d4c35293.png]]
-:END:
-
-
-#+RESULTS:
-: ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
+[[file:./.ob-jupyter/14e4ca2fca9fa3f41084f3afd84d937f2e1f22a2.png]]
 
 * X by PROP profile plots
 #+begin_src jupyter-python
@@ -142,15 +135,15 @@ for prof_num, label in profiles_of_interest.items():
 
 #+RESULTS:
 :RESULTS:
-[[file:./.ob-jupyter/22c04f93b7abf1b363cdd6c2f5951a52bbc80104.png]]
-[[file:./.ob-jupyter/5338af8ee7735899b8b81b181fc5cfe68cc998e0.png]]
-[[file:./.ob-jupyter/fb789d2e76c92aeafa7a2e948a8a707cc1a51d0a.png]]
-[[file:./.ob-jupyter/f619b6bb1921b5afced2ec0869a5fa3f26944d4b.png]]
-[[file:./.ob-jupyter/0449a402941ccdd79c40c33624719725264ce706.png]]
-[[file:./.ob-jupyter/381ea089b1f0872fb4c9bdc88918427fb24262db.png]]
-[[file:./.ob-jupyter/8a1de90f0426c8191cb7a3e8e41b1f3f66fcac1f.png]]
-[[file:./.ob-jupyter/f8e3262c1b9002dee8b67ef6166617c56895b304.png]]
-[[file:./.ob-jupyter/7ab4fa7a4cbdbbc92661533fc4209b9e0a727864.png]]
+[[file:./.ob-jupyter/e966a87aa9a0718b95d9601f48df9d1f1a6b7228.png]]
+[[file:./.ob-jupyter/b6ef0e3d89b1cf0eafdeae60a942a1803fd391ec.png]]
+[[file:./.ob-jupyter/63aa427827b6b183611fd05c1bf0a082ada42e87.png]]
+[[file:./.ob-jupyter/bbc066caf0191397b7ef9c5eb4e12dc87b8a89ba.png]]
+[[file:./.ob-jupyter/933985c715be88c503062976fdcbdef321e7ea5e.png]]
+[[file:./.ob-jupyter/0f6ccff92c9cfb172cd54ff4c4689b7287d19ad7.png]]
+[[file:./.ob-jupyter/5df66f4b29f258c0e54c407799b23a58e1cbdcba.png]]
+[[file:./.ob-jupyter/72b1e644195b750b4ad41758c71abd570baaeb57.png]]
+[[file:./.ob-jupyter/962dbf732e1dbce5a3c844a5c66ee62296eb4840.png]]
 :END:
 
 * X by model_number history plots
@@ -192,7 +185,8 @@ for sec_num, section in enumerate(sections):
 
 #+RESULTS:
 [[file:./.ob-jupyter/79d740a48669ed7444cbf8f6b477dd1a6794fbe2.png]]
-* (Profile) Internal Structure: Log T by log Rho
+* Specific Profile/History plots
+** (Profile) Internal Structure: Log T by log Rho
 #+begin_src jupyter-python
 plt.figure(figsize=(8, 6))
 
@@ -210,7 +204,7 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/abca53eb549b8976efa8f90cdbe5776900819e51.png]]
-* (History) Log Age by (Mass and Log_center_p) Luminosity
+** (History) Log Age by (Mass and Log_center_p) Luminosity
 #+begin_src jupyter-python
 fig, ax = plt.subplots()
 ax.plot(h.star_age, h.log_center_P)
@@ -234,7 +228,7 @@ plt.show()
 #+RESULTS:
 [[file:./.ob-jupyter/c7bec129ac492794425845ac120f09363fd43582.png]]
 
-* (History) Model Number by tri_alpa
+** (History) Model Number by tri_alpa
 #+begin_src jupyter-python
 fig, ax = plt.subplots()
 ax.plot(h.model_number, h.tri_alfa)
@@ -254,7 +248,7 @@ plt.show()
 #+RESULTS:
 [[file:./.ob-jupyter/54d5608414e2c6050ee2ecdd051262d1c7e953d3.png]]
 
-* (History) Model Number by pp
+** (History) Model Number by pp
 #+begin_src jupyter-python
 fig, ax = plt.subplots()
 ax.plot(h.model_number, h.pp)
@@ -274,6 +268,65 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/8c40bf63b30f9bde3495fd6781d7a504edd23914.png]]
+
+** (History) log T_eff by Log L
+#+begin_src jupyter-python
+fig, ax = plt.subplots()
+ax.plot(h.log_Teff, h.log_L)
+ax.set_xlabel('Log T_eff')
+ax.set_ylabel('Log L')
+ax.set_title('Hayashi zone')
+
+# Profiles of interests
+for prof_num in profiles_of_interest:
+    p_temp = l.profile_data(profile_number=prof_num)
+    ax.axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+    ax.text(p_temp.model_number, ax.get_ylim()[1], str(prof_num), fontsize=7, color='red')
+
+plt.tight_layout(rect=[0, 0, 1, 0.97])
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/f45339ecdc4c9f130b1b71a72e8229c78a8517e7.png]]
+
+** (History) Nuclear burning and Central temperature history
+#+begin_src jupyter-python
+fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
+# Mass fractions
+axes[0].plot(h.model_number, h.center_h1, label='center_h1', lw=1.5)
+axes[0].plot(h.model_number, h.center_he4, label='center_he4', lw=1.5)
+axes[0].set_ylabel('Mass Fraction')
+axes[0].set_title('Core Composition')
+axes[0].legend(fontsize=8)
+axes[0].grid(True, linestyle='--', alpha=0.5)
+
+# Nuclear Burning
+axes[1].plot(h.model_number, h.cno, label='cno', lw=1.5)
+axes[1].plot(h.model_number, h.tri_alfa, label='tri_alfa', lw=1.5)
+axes[1].set_ylabel('log Burning Rate')
+axes[1].set_title('Nuclear Burning Rates')
+axes[1].legend(fontsize=8)
+axes[1].grid(True, linestyle='--', alpha=0.5)
+
+# Central Temperature
+axes[2].plot(h.model_number, h.log_center_T, color='black', lw=1.5)
+axes[2].set_ylabel('log_center_T')
+axes[2].set_title('Central Temperature Evolution')
+axes[2].grid(True, linestyle='--', alpha=0.5)
+
+# Interesting Model Numbers
+for prof_num, model_str in profiles_of_interest.items():
+    for ax in axes:
+        ax.axvline(int(model_str), color='red', alpha=0.5, lw=1)
+        ax.text(int(model_str), ax.get_ylim()[1], str(prof_num), fontsize=7, color='red', ha='center')
+
+axes[2].set_xlabel('Model Number')
+fig.suptitle('Evolution', fontsize=12)
+plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.savefig('Evolution.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
 * Filters
 #+begin_src jupyter-python
 # HR mask for 12M_sun
@@ -320,7 +373,7 @@ short_labels = {
     #14: '',
     #15: '',
     #17: '',
-    27: 'Core Collapse',
+    27: 'He-burning',
 }
 
 offsets = {
@@ -332,7 +385,7 @@ offsets = {
     #14: (30, -20),
     #15: (30, 0),
     #17: (30, 20),
-    27: (-70, 20),
+    #27: (-70, 20),
 }
 for prof_num, model_str in profiles_of_interest.items():
     model_num = int(model_str)
@@ -364,42 +417,377 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/0ed9e2b8cddfc3ee2dd9b998132daaeae2a12cf5.png]]
-
-* Nuclear burning and Central temperature history
+[[file:./.ob-jupyter/cf3cb973ce35b3a35b198293795bc0586e30e270.png]]
+* Profiles of Interest
+** Constants
 #+begin_src jupyter-python
-fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
-# Mass fractions
-axes[0].plot(h.model_number, h.center_h1, label='center_h1', lw=1.5)
-axes[0].plot(h.model_number, h.center_he4, label='center_he4', lw=1.5)
-axes[0].set_ylabel('Mass Fraction')
-axes[0].set_title('Core Composition')
-axes[0].legend(fontsize=8)
-axes[0].grid(True, linestyle='--', alpha=0.5)
+G        = 6.674e-8
+k_B      = 1.381e-16
+m_H      = 1.673e-24
+sigma_SB = 5.670e-5
+M_sun    = 1.989e33
+R_sun    = 6.957e10#cm
+mu      = 0.62 # Fully ionized H/He approx
+mu_e    = 1.15
+a_rad   = 7.566e-15
+c_light = 3e10
+hbar    = 1.055e-27
+m_e     = 9.109e-28
 
-# Nuclear Burning
-axes[1].plot(h.model_number, h.cno, label='cno', lw=1.5)
-axes[1].plot(h.model_number, h.tri_alfa, label='tri_alfa', lw=1.5)
-axes[1].set_ylabel('log Burning Rate')
-axes[1].set_title('Nuclear Burning Rates')
-axes[1].legend(fontsize=8)
-axes[1].grid(True, linestyle='--', alpha=0.5)
+selected = {
+    1:  ('Pre-MS Contraction', 'tab:purple'),
+    7:  ('Main Sequence',      'tab:blue'),
+    11: ('TAMS',               'tab:green'),
+    27: ('He-burning / RSG',   'tab:red'),
+}
 
-# Central Temperature
-axes[2].plot(h.model_number, h.log_center_T, color='black', lw=1.5)
-axes[2].set_ylabel('log_center_T')
-axes[2].set_title('Central Temperature Evolution')
-axes[2].grid(True, linestyle='--', alpha=0.5)
+burning_lines = {
+    'H burning (pp/CNO)': (7.0,  'tab:blue',   '-'),
+    'He burning (3α)':    (8.0,  'tab:orange',  '-'),
+    'C burning':          (8.6,  'tab:green',   '-'),
+}
 
-# Interesting Model Numbers
-for prof_num, model_str in profiles_of_interest.items():
-    for ax in axes:
-        ax.axvline(int(model_str), color='red', alpha=0.5, lw=1)
-        ax.text(int(model_str), ax.get_ylim()[1], str(prof_num), fontsize=7, color='red', ha='center')
+virial_profiles = {7: ('Main Sequence', 'tab:blue'), 27: ('He-burning / RSG', 'tab:red')}
 
-axes[2].set_xlabel('Model Number')
-fig.suptitle('Evolution', fontsize=12)
-plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.savefig('Evolution.png', dpi=150, bbox_inches='tight')
+def get_p_age(prof_num):
+    p   = l.profile_data(profile_number=prof_num)
+    mn  = p.model_number
+    age = h.star_age[h.model_number == mn][0]
+    return p, age
+#+end_src
+
+#+RESULTS:
+
+** Q1 & Q2
+#+begin_src jupyter-python
+# Q1 Q2, Power Sources: nuclear burning rates + fuel abundances
+fig, axes = plt.subplots(4, 3, figsize=(16, 18))
+
+for row, (prof_num, (label, color)) in enumerate(selected.items()):
+    p, age = get_p_age(prof_num)
+    ax = axes[row, 0]
+
+    # Energy Generation Rates
+    ax.plot(p.mass, p.pp,       lw=1.5, label='pp chain',   color='tab:blue')
+    ax.plot(p.mass, p.cno,      lw=1.5, label='CNO',        color='tab:orange')
+    ax.plot(p.mass, p.tri_alfa, lw=1.5, label='triple-α',   color='tab:red')
+    ax.plot(p.mass, np.abs(p.eps_grav), lw=1.5, ls='--',
+            label=r'|ε$_{grav}$|', color='gray')
+    ax.set_yscale('symlog', linthresh=1e-3)
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel(r'ε (erg g$^{-1}$ s$^{-1}$)')
+    ax.set_title(f'P{prof_num}: {label} | {age:.2e} yr\nBurning Rates', fontsize=9)
+    ax.legend(fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+
+    # Fuel Abundances
+    ax = axes[row, 1]
+    ax.plot(p.mass, p.h1,  lw=1.5, label=r'$^1$H',   color='tab:blue')
+    ax.plot(p.mass, p.he4, lw=1.5, label=r'$^4$He',  color='tab:orange')
+    ax.plot(p.mass, p.c12, lw=1.5, label=r'$^{12}$C',color='tab:green')
+    ax.plot(p.mass, p.o16, lw=1.5, label=r'$^{16}$O',color='tab:red')
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel('Mass Fraction')
+    ax.set_title('Composition', fontsize=9)
+    ax.legend(fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+
+    # Temp + Density profile
+    ax = axes[row, 2]
+    ax2 = ax.twinx()
+    ax.plot(p.mass,  p.logT,   lw=1.5, color='tab:red',   label='log T')
+    ax2.plot(p.mass, p.logRho, lw=1.5, color='tab:blue', ls='--', label='log ρ')
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel('log T (K)', color='tab:red')
+    ax2.set_ylabel(r'log ρ (g cm$^{-3}$)', color='tab:blue')
+    ax.set_title('T & ρ structure', fontsize=9)
+    # Annotate burning thresholds
+    ax.axhline(7.0, color='tab:orange', ls=':', lw=1, alpha=0.7)   # CNO ignition ~10^7 K
+    ax.axhline(8.0, color='tab:red',    ls=':', lw=1, alpha=0.7)   # He ignition  ~10^8 K
+    ax.text(p.mass.max()*0.55, 7.05, 'T$_{CNO}$', fontsize=7, color='tab:orange')
+    ax.text(p.mass.max()*0.55, 8.05, r'T$_{3\alpha}$', fontsize=7, color='tab:red')
+    lines1, labs1 = ax.get_legend_handles_labels()
+    lines2, labs2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1+lines2, labs1+labs2, fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+
+fig.suptitle('Q1 & Q2: Power Sources and Conditions', fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('q1_q2_power_sources.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/6ba56c4911e35c3c8e62467cac6e03b87a1ca259.png]]
+
+** Q3 What is pressure mainly due to?
+#+begin_src jupyter-python
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+axes = axes.flatten()
+
+for ax, (prof_num, (label, color)) in zip(axes, selected.items()):
+    p, age = get_p_age(prof_num)
+
+    beta     = p.pgas / (p.pgas + p.prad)
+    beta_rad = p.prad / (p.pgas + p.prad)
+
+    ax.stackplot(p.mass,
+                 beta, beta_rad,
+                 labels=[r'Gas ($\beta$)', r'Radiation ($1-\beta$)'],
+                 colors=['tab:blue', 'tab:orange'], alpha=0.6)
+
+    # Degeneracy: η > 0 means degenerate; overplot as shaded region on secondary axis
+    ax2 = ax.twinx()
+    ax2.plot(p.mass, p.eta, color='tab:red', lw=1.2, ls='--', label='η (degeneracy)')
+    ax2.axhline(0, color='tab:red', lw=0.8, ls=':')
+    ax2.set_ylabel('η (degeneracy param)', color='tab:red', fontsize=8)
+    ax2.tick_params(axis='y', labelcolor='tab:red', labelsize=7)
+
+    ax.set_title(f'P{prof_num}: {label}\nAge = {age:.2e} yr', fontsize=9)
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel('Fraction of Total Pressure')
+    ax.set_ylim(0, 1.05)
+    lines1, labs1 = ax.get_legend_handles_labels()
+    lines2, labs2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1+lines2, labs1+labs2, fontsize=7, loc='lower right')
+    ax.grid(True, linestyle=':', alpha=0.4)
+
+fig.suptitle('Q3: Pressure Sources: Gas vs Radiation vs Degeneracy', fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('q3_pressure.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/a56544a6285408a415c8425b80b857e0b2c336b2.png]]
+
+** Q4 Convective
+#+begin_src jupyter-python
+fig, axes = plt.subplots(4, 2, figsize=(14, 18))
+
+for row, (prof_num, (label, color)) in enumerate(selected.items()):
+    p, age = get_p_age(prof_num)
+
+    # Schwarzschild criterion
+    ax = axes[row, 0]
+    ax.plot(p.mass, p.gradr, color=color,   lw=1.5, label=r'$\nabla_\mathrm{rad}$')
+    ax.plot(p.mass, p.grada, color='black', lw=1.5, ls='--', label=r'$\nabla_\mathrm{ad}$')
+    ax.fill_between(p.mass, p.gradr, p.grada,
+                    where=(p.gradr > p.grada),
+                    alpha=0.3, color=color, label='Convective zone')
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel(r'$\nabla$')
+    ax.set_ylim(-0.02, max(0.6, float(np.percentile(p.gradr, 99))*1.1))
+    ax.set_title(f'P{prof_num}: {label} | {age:.2e} yr\nSchwarzschild Criterion', fontsize=9)
+    ax.legend(fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+
+    # Log_D_conv
+    ax = axes[row, 1]
+    D_conv = np.where(p.log_D_conv < -10, np.nan, np.array(p.log_D_conv, dtype=float))
+
+    ax.plot(p.mass, D_conv, color=color, lw=1.5)
+    ax.fill_between(p.mass, D_conv, 0,
+                    where=(D_conv > 1),
+                    alpha=0.3, color=color, label='Convective (D > 10 cm² s⁻¹)')
+    ax.axhline(0, color='gray', ls=':', lw=1)
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel(r'$\log_{10}\, D_\mathrm{conv}$ (cm² s⁻¹)')
+    ax.set_title(f'P{prof_num}: Convective Diffusivity', fontsize=9)
+    ax.legend(fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+
+    fig.suptitle('Q4: Convective Zones', fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('q4_convection.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/661212cd71b26860e2f06ae7ee1f5f672643fc25.png]]
+
+** Q5 Mass Loss
+#+begin_src jupyter-python
+fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+
+axes[0].plot(h.model_number, h.star_mass, color='black', lw=1.5)
+axes[0].set_ylabel(r'$M_\star$ ($M_\odot$)')
+axes[0].set_title('Stellar Mass over Time')
+axes[0].grid(True, linestyle=':', alpha=0.5)
+
+axes[1].plot(h.model_number, np.log10(np.abs(h.star_mdot) + 1e-20),
+             color='tab:red', lw=1.5)
+axes[1].set_ylabel(r'$\log_{10}|\dot{M}|$ ($M_\odot$ yr$^{-1}$)')
+axes[1].set_title(r'Mass-Loss Rate $\dot{M}$')
+axes[1].set_xlabel('Model Number')
+axes[1].grid(True, linestyle=':', alpha=0.5)
+
+# Mark our 4 profiles
+for prof_num, (label, color) in selected.items():
+    p_temp = l.profile_data(profile_number=prof_num)
+    for ax in axes:
+        ax.axvline(p_temp.model_number, color=color, alpha=0.7, lw=1.2, ls='--')
+        ax.text(p_temp.model_number, ax.get_ylim()[1]*0.97,
+                f'P{prof_num}', fontsize=7, color=color, ha='center', va='top')
+
+# Annotate total mass lost
+total_lost = h.star_mass[0] - h.star_mass[-1]
+axes[0].text(0.02, 0.05,
+             f'Total mass lost: {total_lost:.3f} $M_\odot$\n'
+             r'(Driven by radiation pressure / stellar winds)',
+             transform=axes[0].transAxes, fontsize=9,
+             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+
+fig.suptitle('Q5: Mass Loss History', fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('q5_mass_loss.png', dpi=150, bbox_inches='tight')
+plt.show()
+
+# Print summary
+print("=== Mass Loss Summary ===")
+for prof_num, (label, _) in selected.items():
+    p_temp = l.profile_data(profile_number=prof_num)
+    mn  = p_temp.model_number
+    idx = np.where(h.model_number == mn)[0][0]
+    print(f"  P{prof_num:>2} ({label:<22}): "
+          f"M = {h.star_mass[idx]:.4f} M_sun, "
+          f"Mdot = {h.star_mdot[idx]:.3e} M_sun/yr")
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+: <>:26: SyntaxWarning: invalid escape sequence '\o'
+: <>:26: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1911292035.py:26: SyntaxWarning: invalid escape sequence '\o'
+:   f'Total mass lost: {total_lost:.3f} $M_\odot$\n'
+[[file:./.ob-jupyter/a1781a8a49dac2f79fe890b26f5f0ad932286b4c.png]]
+: === Mass Loss Summary ===
+:   P 1 (Pre-MS Contraction    ): M = 12.0000 M_sun, Mdot = -1.176e-08 M_sun/yr
+:   P 7 (Main Sequence         ): M = 12.0000 M_sun, Mdot = 0.000e+00 M_sun/yr
+:   P11 (TAMS                  ): M = 12.0000 M_sun, Mdot = 0.000e+00 M_sun/yr
+:   P27 (He-burning / RSG      ): M = 11.7864 M_sun, Mdot = -6.870e-07 M_sun/yr
+:END:
+** Q6 Log T vs log Rho
+#+begin_src jupyter-python
+rho_grid = np.linspace(-9, 8, 500)
+rho_lin  = 10**rho_grid
+
+# Gas pressure = Rad pressure
+T_gas_rad = (3 * k_B * rho_lin / (a_rad * mu * m_H))**(1/3)
+logT_gas_rad = np.log10(T_gas_rad)
+
+# Gas pressure = Non-rel electorn degen
+logT_degen = np.log10(2.3e5) + (2/3) * (rho_grid - np.log10(mu_e))
+
+# Rel degen
+log_rho_rel_deg = np.log10(2e6 * mu_e)
+
+fig, ax = plt.subplots(figsize=(12, 9))
+
+# Plot boundary lines
+ax.plot(rho_grid, logT_gas_rad, 'k-',  lw=1.5, label=r'$P_\mathrm{gas} = P_\mathrm{rad}$')
+ax.plot(rho_grid, logT_degen,   'k--', lw=1.5, label=r'$P_\mathrm{gas} = P_\mathrm{deg,NR}$')
+ax.axvline(log_rho_rel_deg, color='k', ls=':', lw=1.5, label=r'Rel. degeneracy ($\rho/\mu_e = 2\times10^6$)')
+
+# pressure regiosn
+ax.text(-7, 9.5, 'Radiation\npressure\ndominated', fontsize=9, color='gray', ha='center', style='italic')
+ax.text( 1, 6.0, 'Ideal gas\ndominated', fontsize=9, color='gray', ha='center', style='italic')
+ax.text( 5, 6.5, 'Degenerate\nelectron\npressure', fontsize=9, color='gray', ha='center', style='italic')
+
+# Burning lines
+for blabel, (logT_burn, bcolor, bls) in burning_lines.items():
+    ax.axhline(logT_burn, color=bcolor, ls=bls, lw=1.2, alpha=0.7, label=blabel)
+
+# Plot each stellar profile
+for prof_num, (label, color) in selected.items():
+    p, age = get_p_age(prof_num)
+    ax.plot(p.logRho, p.logT, lw=2, color=color,
+            label=f'P{prof_num}: {label} ({age:.1e} yr)')
+    # Mark center
+    ax.scatter(p.logRho[-1], p.logT[-1], color=color, s=60, zorder=5)
+    # Mark surface
+    ax.scatter(p.logRho[0],  p.logT[0],  color=color, s=30, marker='x', zorder=5)
+
+ax.set_xlim(-9, 9)
+ax.set_ylim(3.5, 10)
+ax.set_xlabel(r'$\log_{10}(\rho\ [\mathrm{g\ cm}^{-3}])$', fontsize=12)
+ax.set_ylabel(r'$\log_{10}(T\ [\mathrm{K}])$', fontsize=12)
+ax.set_title('Q6: Internal Structure in log T – log ρ plane\n'
+             'filled circle = center, × = surface', fontsize=12)
+ax.legend(fontsize=8, loc='upper left')
+ax.grid(True, linestyle=':', alpha=0.5)
+
+plt.tight_layout()
+plt.savefig('q6_logT_logRho.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/f4dad499e1d2a1568cd0f326bf6ed55e25936148.png]]
+
+** Q7 Virial Theorm
+#+begin_src jupyter-python
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+for ax, (prof_num, (label, color)) in zip(axes, virial_profiles.items()):
+    p, age = get_p_age(prof_num)
+
+    # Convert enclosed mass to grams; radius to cm
+    m_g = p.mass * M_sun
+    r_cm = p.radius * R_sun
+
+    # dm for each shell (mass is outermost → innermost in MESA, so flip)
+    # MESA profiles: index 0 = surface, index -1 = center → reverse for integration
+    m_g_rev   = m_g[::-1]
+    r_rev     = r_cm[::-1]
+    dm        = np.diff(m_g_rev)
+
+    # Gravitational potential energy: dE_grav = -G m_enc / r * dm
+    m_mid     = 0.5 * (m_g_rev[:-1]  + m_g_rev[1:])
+    r_mid     = 0.5 * (r_rev[:-1]    + r_rev[1:])
+    dE_grav   = -G * m_mid / r_mid * dm
+    E_grav    = np.sum(dE_grav)
+
+    # Thermal energy: u (erg/g) is specific internal energy — MESA 'energy' column
+    energy_rev = p.energy[::-1]
+    u_mid      = 0.5 * (energy_rev[:-1] + energy_rev[1:])
+    dE_therm   = u_mid * dm
+    E_therm    = np.sum(dE_therm)
+
+    # Virial ratio
+    virial_ratio = -2 * E_therm / E_grav
+
+    # Cumulative profile plot
+    E_grav_cum  = np.cumsum(dE_grav)
+    E_therm_cum = np.cumsum(dE_therm)
+    mass_mid_Msun = m_mid / M_sun
+
+    ax.plot(mass_mid_Msun, E_grav_cum,       color='tab:blue',   lw=1.5, label=r'$E_\mathrm{grav}$ (cumulative)')
+    ax.plot(mass_mid_Msun, E_therm_cum,      color='tab:red',    lw=1.5, label=r'$E_\mathrm{therm}$ (cumulative)')
+    ax.plot(mass_mid_Msun, -2*E_therm_cum,   color='tab:orange', lw=1.5, ls='--', label=r'$-2E_\mathrm{therm}$ (should equal $E_\mathrm{grav}$)')
+
+    ax.set_xlabel(r'Enclosed Mass ($M_\odot$)')
+    ax.set_ylabel('Energy (erg)')
+    ax.set_title(f'P{prof_num}: {label}\n'
+                 f'2E_therm/|E_grav| = {virial_ratio:.3f}', fontsize=9)
+    ax.legend(fontsize=7)
+    ax.grid(True, linestyle=':', alpha=0.5)
+    ax.axhline(0, color='black', lw=0.8, ls=':')
+
+    # Annotate ratio on plot
+    ax.text(0.05, 0.07,
+            f'Virial ratio = {virial_ratio:.3f}\n'
+            f'E_grav = {E_grav:.3e} erg\n'
+            f'E_therm = {E_therm:.3e} erg',
+            transform=ax.transAxes, fontsize=8,
+            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
+
+fig.suptitle('Q7: Virial Theorem: $2E_{therm} + E_{grav} = 0$?',
+             fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('q7_virial.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/a6799c6b0e8b9d7d58850df7b8eb997ddc6d4153.png]]
