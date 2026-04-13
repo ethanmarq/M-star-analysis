@@ -385,7 +385,7 @@ offsets = {
     #14: (30, -20),
     #15: (30, 0),
     #17: (30, 20),
-    #27: (-70, 20),
+    27: (-70, 20),
 }
 for prof_num, model_str in profiles_of_interest.items():
     model_num = int(model_str)
@@ -417,7 +417,25 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/cf3cb973ce35b3a35b198293795bc0586e30e270.png]]
+:RESULTS:
+# [goto error]
+#+begin_example
+[31m---------------------------------------------------------------------------[39m
+[31mKeyError[39m                                  Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[40][39m[32m, line 55[39m
+[32m     51[39m     plt.scatter(x, y, color=[33m'red'[39m, s=[32m10[39m, zorder=[32m5[39m)
+[32m     52[39m     plt.annotate(
+[32m     53[39m         short_labels[prof_num],
+[32m     54[39m         xy=(x, y),
+[32m---> [39m[32m55[39m         xytext=offsets[prof_num],
+[32m     56[39m         textcoords=[33m'offset points'[39m,
+[32m     57[39m         fontsize=[32m7[39m,
+[32m     58[39m         arrowprops=dict(arrowstyle=[33m'-'[39m, color=[33m'gray'[39m, lw=[32m0.5[39m)
+
+[31mKeyError[39m: 27
+#+end_example
+[[file:./.ob-jupyter/409fc6b19f86f3db8f6f0b59ceed778d48736b6c.png]]
+:END:
 * Profiles of Interest
 ** Constants
 #+begin_src jupyter-python
