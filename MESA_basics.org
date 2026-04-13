@@ -385,7 +385,7 @@ offsets = {
     #14: (30, -20),
     #15: (30, 0),
     #17: (30, 20),
-    27: (-70, 20),
+    27: (-30, 25),
 }
 for prof_num, model_str in profiles_of_interest.items():
     model_num = int(model_str)
@@ -417,25 +417,7 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-:RESULTS:
-# [goto error]
-#+begin_example
-[31m---------------------------------------------------------------------------[39m
-[31mKeyError[39m                                  Traceback (most recent call last)
-[36mCell[39m[36m [39m[32mIn[40][39m[32m, line 55[39m
-[32m     51[39m     plt.scatter(x, y, color=[33m'red'[39m, s=[32m10[39m, zorder=[32m5[39m)
-[32m     52[39m     plt.annotate(
-[32m     53[39m         short_labels[prof_num],
-[32m     54[39m         xy=(x, y),
-[32m---> [39m[32m55[39m         xytext=offsets[prof_num],
-[32m     56[39m         textcoords=[33m'offset points'[39m,
-[32m     57[39m         fontsize=[32m7[39m,
-[32m     58[39m         arrowprops=dict(arrowstyle=[33m'-'[39m, color=[33m'gray'[39m, lw=[32m0.5[39m)
-
-[31mKeyError[39m: 27
-#+end_example
-[[file:./.ob-jupyter/409fc6b19f86f3db8f6f0b59ceed778d48736b6c.png]]
-:END:
+[[file:./.ob-jupyter/2e462f54534ce3157c81ae33faf9ecfa401fb539.png]]
 * Profiles of Interest
 ** Constants
 #+begin_src jupyter-python
@@ -660,30 +642,15 @@ fig.suptitle('Q5: Mass Loss History', fontsize=13, fontweight='bold')
 plt.tight_layout()
 plt.savefig('q5_mass_loss.png', dpi=150, bbox_inches='tight')
 plt.show()
-
-# Print summary
-print("=== Mass Loss Summary ===")
-for prof_num, (label, _) in selected.items():
-    p_temp = l.profile_data(profile_number=prof_num)
-    mn  = p_temp.model_number
-    idx = np.where(h.model_number == mn)[0][0]
-    print(f"  P{prof_num:>2} ({label:<22}): "
-          f"M = {h.star_mass[idx]:.4f} M_sun, "
-          f"Mdot = {h.star_mdot[idx]:.3e} M_sun/yr")
 #+end_src
 
 #+RESULTS:
 :RESULTS:
 : <>:26: SyntaxWarning: invalid escape sequence '\o'
 : <>:26: SyntaxWarning: invalid escape sequence '\o'
-: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1911292035.py:26: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/4081094775.py:26: SyntaxWarning: invalid escape sequence '\o'
 :   f'Total mass lost: {total_lost:.3f} $M_\odot$\n'
-[[file:./.ob-jupyter/a1781a8a49dac2f79fe890b26f5f0ad932286b4c.png]]
-: === Mass Loss Summary ===
-:   P 1 (Pre-MS Contraction    ): M = 12.0000 M_sun, Mdot = -1.176e-08 M_sun/yr
-:   P 7 (Main Sequence         ): M = 12.0000 M_sun, Mdot = 0.000e+00 M_sun/yr
-:   P11 (TAMS                  ): M = 12.0000 M_sun, Mdot = 0.000e+00 M_sun/yr
-:   P27 (He-burning / RSG      ): M = 11.7864 M_sun, Mdot = -6.870e-07 M_sun/yr
+[[file:./.ob-jupyter/ca18699e08a871f1c5af35ac6898bdc4edab5f2d.png]]
 :END:
 ** Q6 Log T vs log Rho
 #+begin_src jupyter-python
