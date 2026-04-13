@@ -627,7 +627,7 @@ for prof_num, (label, color) in selected.items():
     p_temp = l.profile_data(profile_number=prof_num)
     for ax in axes:
         ax.axvline(p_temp.model_number, color=color, alpha=0.7, lw=1.2, ls='--')
-        ax.text(p_temp.model_number, ax.get_ylim()[1]*0.97,
+        ax.text(p_temp.model_number, ax.get_ylim()[1]*1.0,
                 f'P{prof_num}', fontsize=7, color=color, ha='center', va='top')
 
 # Annotate total mass lost
@@ -639,7 +639,6 @@ axes[0].text(0.02, 0.05,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
 fig.suptitle('Q5: Mass Loss History', fontsize=13, fontweight='bold')
-plt.tight_layout()
 plt.savefig('q5_mass_loss.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
@@ -648,9 +647,9 @@ plt.show()
 :RESULTS:
 : <>:26: SyntaxWarning: invalid escape sequence '\o'
 : <>:26: SyntaxWarning: invalid escape sequence '\o'
-: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/4081094775.py:26: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1246371932.py:26: SyntaxWarning: invalid escape sequence '\o'
 :   f'Total mass lost: {total_lost:.3f} $M_\odot$\n'
-[[file:./.ob-jupyter/ca18699e08a871f1c5af35ac6898bdc4edab5f2d.png]]
+[[file:./.ob-jupyter/e8ec57dfab1537ded9744caed0ca5479d00b1b30.png]]
 :END:
 ** Q6 Log T vs log Rho
 #+begin_src jupyter-python
@@ -673,11 +672,6 @@ fig, ax = plt.subplots(figsize=(12, 9))
 ax.plot(rho_grid, logT_gas_rad, 'k-',  lw=1.5, label=r'$P_\mathrm{gas} = P_\mathrm{rad}$')
 ax.plot(rho_grid, logT_degen,   'k--', lw=1.5, label=r'$P_\mathrm{gas} = P_\mathrm{deg,NR}$')
 ax.axvline(log_rho_rel_deg, color='k', ls=':', lw=1.5, label=r'Rel. degeneracy ($\rho/\mu_e = 2\times10^6$)')
-
-# pressure regiosn
-ax.text(-7, 9.5, 'Radiation\npressure\ndominated', fontsize=9, color='gray', ha='center', style='italic')
-ax.text( 1, 6.0, 'Ideal gas\ndominated', fontsize=9, color='gray', ha='center', style='italic')
-ax.text( 5, 6.5, 'Degenerate\nelectron\npressure', fontsize=9, color='gray', ha='center', style='italic')
 
 # Burning lines
 for blabel, (logT_burn, bcolor, bls) in burning_lines.items():
@@ -708,7 +702,7 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/f4dad499e1d2a1568cd0f326bf6ed55e25936148.png]]
+[[file:./.ob-jupyter/abbfb975b42146b1fb16f82d113c50366a0b9bca.png]]
 
 ** Q7 Virial Theorm
 #+begin_src jupyter-python
@@ -776,3 +770,95 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/a6799c6b0e8b9d7d58850df7b8eb997ddc6d4153.png]]
+** Q4 Kipper plugin
+#+begin_src jupyter-python
+import sys
+sys.path.insert(0, './mkipp')
+import mkipp
+import kipp_data
+import mesa_data as mkipp_mesa
+from matplotlib.patches import PathPatch
+
+LOGS_DIR  = './MESA-Web_Job_04012666280'
+HIST_PATH = f'{LOGS_DIR}/history.data'
+
+def dconv_extractor(identifier, log10_on_data, prof, return_data_columns=False):
+    if return_data_columns:
+        return ['log_D_conv']
+    data = prof.get('log_D_conv')
+    # mask sentinel values
+    data = np.where(data < -10, 0, data)
+    return data
+
+fig, ax = plt.subplots(figsize=(12, 6))
+kp = mkipp.kipp_plot(mkipp.Kipp_Args(
+    logs_dirs     = [LOGS_DIR],
+    history_paths = [HIST_PATH],
+    identifier    = 'log_D_conv',
+    extractor     = dconv_extractor,
+    log10_on_data = False,
+    show_conv     = False,
+    show_semi     = False,
+    show_over     = False,
+    core_masses   = ['He', 'C', 'O'],
+    decorate_plot = False,
+    save_file     = False,
+), axis=ax)
+
+cbar = fig.colorbar(kp.contour_plot, ax=ax, pad=0.02)
+cbar.set_label(r'$\log_{10} D_\mathrm{conv}$ (cm² s⁻¹)', fontsize=10)
+
+ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
+
+profile_markers = {
+    1:  (1,    'Pre-MS',  'tab:purple'),
+    7:  (275,  'MS',      'tab:blue'),
+    11: (362,  'TAMS',    'tab:green'),
+    27: (1000, 'RSG',     'tab:red'),
+}
+
+ax.set_xlabel('Model Number', fontsize=11)
+ax.set_ylabel(r'Enclosed Mass ($M_\odot$)', fontsize=11)
+
+fig.canvas.draw()
+ymin, ymax = ax.get_ylim()
+xmin, xmax = ax.get_xlim()
+for prof_num, (mn, plabel, pcolor) in profile_markers.items():
+    ax.axvline(mn, color=pcolor, lw=1.5, ls='-', alpha=0.9, zorder=5)
+    ax.text(mn, ymax * 0.92, plabel,
+            fontsize=8, color=pcolor, ha='center', va='top', zorder=6,
+            bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1))
+
+legend_handles = [
+    mpatches.Patch(color='black',      label='Stellar surface (mass loss)'),
+    mpatches.Patch(color='blue',       label='He core boundary',  linestyle='--'),
+    mpatches.Patch(color='red',        label='C core boundary',   linestyle='--'),
+    mpatches.Patch(color='green',      label='O core boundary',   linestyle='--'),
+    # separator then profile markers
+    mpatches.Patch(color='tab:purple', label='P1:  Pre-MS'),
+    mpatches.Patch(color='tab:blue',   label='P7:  Main Sequence'),
+    mpatches.Patch(color='tab:green',  label='P11: TAMS'),
+    mpatches.Patch(color='tab:red',    label='P27: Red Supergiant'),
+]
+ax.legend(handles=legend_handles, fontsize=8, loc='upper left',
+          framealpha=0.85, title='Legend', title_fontsize=9)
+ax.legend(handles=legend_handles, fontsize=8, loc='upper left', framealpha=0.8)
+
+plt.tight_layout()
+plt.savefig('q4_kipp_dconv.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+: <>:37: SyntaxWarning: invalid escape sequence '\o'
+: <>:37: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/566026867.py:37: SyntaxWarning: invalid escape sequence '\o'
+:   ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
+: ./MESA-Web_Job_04012666280 ['./MESA-Web_Job_04012666280']
+: Reading profile data
+: Reading history data
+: Constructing mixing regions
+: there are 0 mixing zonesj
+[[file:./.ob-jupyter/e8bab427ff6f51d01455157c012d128f64540885.png]]
+:END:
