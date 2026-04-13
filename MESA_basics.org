@@ -770,6 +770,7 @@ plt.show()
 
 #+RESULTS:
 [[file:./.ob-jupyter/a6799c6b0e8b9d7d58850df7b8eb997ddc6d4153.png]]
+
 ** Q4 Kipper plugin
 #+begin_src jupyter-python
 import sys
