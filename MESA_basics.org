@@ -7,6 +7,7 @@
 cp MESA-Web_Job_04012666280/trimmed_history.data MESA-Web_Job_04012666280/history.data
 #+end_src
 
+** Imports
 #+begin_src jupyter-python :results silent
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -16,7 +17,7 @@ import pandas as pd
 import math
 #+end_src
 
-* Load History and Profile Data
+** history loading
 #+begin_src jupyter-python :results silent
 # Load your history file. Note directory location specified.
 h = mr.MesaData('./MESA-Web_Job_04012666280/trimmed_history.data')
@@ -30,24 +31,43 @@ l = mr.MesaLogDir('./MESA-Web_Job_04012666280')
 # Use l.profile_data() for the very last model,
 # or l.profile_data(model_number=100) for a specific step.
 p = l.profile_data(model_number=1000)
-#+end_src
 
-#+begin_src jupyter-python
+profiles_of_interest = {
+    1: '1',
+    2: '50',
+    7: '275',
+    9: '325',
+    11: '362',
+    14: '467',
+    15: '476',
+    17: '545',
+    27: '1000',
+}
 print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}\n\n specfiic profile columns {p.bulk_names}')
 #+end_src
 
-#+RESULTS:
-: history.profile columns: ('model_number', 'star_age', 'star_mass', 'log_L', 'log_R', 'log_Teff', 'log_center_T', 'log_center_Rho', 'log_center_P', 'center_h1', 'center_he3', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'center_ne20', 'center_mg24', 'center_si28', 'center_s32', 'center_ar36', 'center_ca40', 'center_ti44', 'center_cr48', 'center_fe52', 'center_fe54', 'center_fe56', 'center_ni56', 'center_degeneracy', 'center_ye', 'center_entropy', 'compactness_parameter', 'dynamic_timescale', 'kh_timescale', 'nuc_timescale', 'pp', 'cno', 'tri_alfa', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lneu', 'he_core_mass', 'c_core_mass', 'o_core_mass', 'si_core_mass', 'fe_core_mass', 'he_core_radius', 'c_core_radius', 'o_core_radius', 'si_core_radius', 'fe_core_radius', 'max_abs_v_velocity', 'surf_avg_omega_div_omega_crit', 'log_total_angular_momentum', 'surf_avg_omega', 'surf_avg_v_rot', 'star_mdot')
-:
-:  ZAMS columns: Index(['#SpT', 'Teff', 'logT', 'BCv', 'logL', 'Mbol', 'R_Rsun', 'Mv', 'B-V',
-:        'Bt-Vt', 'G-V', 'Bp-Rp', 'G-Rp', 'M_G', 'b-y', 'U-B', 'V-Rc', 'V-Ic',
-:        'V-Ks', 'J-H', 'H-Ks', 'M_J', 'M_Ks', 'Ks-W1', 'W1-W2', 'W1-W3',
-:        'W1-W4', 'g-r', 'i-z', 'z-Y', 'Msun', '#SpT.1'],
-:       dtype='str')
-:
-:  specfiic profile columns ('mass', 'radius', 'luminosity', 'pressure', 'logRho', 'logT', 'energy', 'entropy', 'cp', 'gamma1', 'grada', 'mu', 'free_e', 'ye', 'pgas', 'prad', 'gradr', 'gradT', 'velocity', 'conv_vel', 'opacity', 'eps_nuc', 'pp', 'cno', 'tri_alfa', 'eps_nuc_neu_total', 'non_nuc_neu', 'eps_grav', 'h1', 'he3', 'he4', 'c12', 'n14', 'o16', 'ne20', 'mg24', 'si28', 's32', 'ar36', 'ca40', 'ti44', 'cr48', 'fe52', 'fe54', 'fe56', 'ni56', 'eta', 'log_omega', 'v_rot', 'j_rot', 'dynamo_log_B_r', 'dynamo_log_B_phi', 'log_D_conv', 'log_D_semi', 'log_D_ovr', 'log_D_thrm')
 
-* X by star_age history plots
+#+begin_src jupyter-python
+#+end_src
+
+** Filters
+#+begin_src jupyter-python
+# HR mask for 12M_sun
+Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
+Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
+mask = Amask + Bmask
+
+# ZAMS
+zams = zams[zams['logL'] != '...']
+zams = zams[zams['logT'] != '...']
+zams['logL'] = zams['logL'].astype(float)
+zams['logT'] = zams['logT'].astype(float)
+#+end_src
+
+#+RESULTS:
+
+* Bulk
+** historyVars by star_age
 #+begin_src jupyter-python
 bulk_names = list(h.bulk_names)
 bulk_names.remove('star_age')
@@ -85,19 +105,48 @@ for sec_num, section in enumerate(sections):
 #+RESULTS:
 [[file:./.ob-jupyter/14e4ca2fca9fa3f41084f3afd84d937f2e1f22a2.png]]
 
-* X by PROP profile plots
+** historyVars by model_number
 #+begin_src jupyter-python
-profiles_of_interest = {
-    1: '1',
-    2: '50',
-    7: '275',
-    9: '325',
-    11: '362',
-    14: '467',
-    15: '476',
-    17: '545',
-    27: '1000',
-}
+bulk_names = list(h.bulk_names)
+bulk_names.remove('model_number')
+
+COLS = 10
+SECTION_SIZE = 60
+sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
+
+for sec_num, section in enumerate(sections):
+    rows = math.ceil(len(section) / COLS)
+    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, name in enumerate(section):
+        try:
+            axes[i].plot(h.model_number, getattr(h, name), lw=1)
+            axes[i].set_title(name, fontsize=8)
+            axes[i].set_xlabel('model_number', fontsize=7)
+            axes[i].tick_params(labelsize=6)
+            # Profiles of interests
+            for prof_num in profiles_of_interest:
+                p_temp = l.profile_data(profile_number=prof_num)
+                axes[i].axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
+                axes[i].text(p_temp.model_number, axes[i].get_ylim()[1], str(prof_num), fontsize=7, color='red')
+        except Exception as e:
+            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
+
+    for j in range(len(section), len(axes)):
+        axes[j].set_visible(False)
+
+    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
+    plt.tight_layout()
+    plt.savefig(f'model_number_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
+    plt.show()
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/79d740a48669ed7444cbf8f6b477dd1a6794fbe2.png]]
+
+** profOfInterest profVars by mass
+#+begin_src jupyter-python
 
 PROP = 'mass'
 COLS = 2
@@ -146,45 +195,6 @@ for prof_num, label in profiles_of_interest.items():
 [[file:./.ob-jupyter/962dbf732e1dbce5a3c844a5c66ee62296eb4840.png]]
 :END:
 
-* X by model_number history plots
-#+begin_src jupyter-python
-bulk_names = list(h.bulk_names)
-bulk_names.remove('model_number')
-
-COLS = 10
-SECTION_SIZE = 60
-sections = [bulk_names[i:i+SECTION_SIZE] for i in range(0, len(bulk_names), SECTION_SIZE)]
-
-for sec_num, section in enumerate(sections):
-    rows = math.ceil(len(section) / COLS)
-    fig, axes = plt.subplots(rows, COLS, figsize=(COLS * 4, rows * 3))
-    axes = axes.flatten()
-
-    for i, name in enumerate(section):
-        try:
-            axes[i].plot(h.model_number, getattr(h, name), lw=1)
-            axes[i].set_title(name, fontsize=8)
-            axes[i].set_xlabel('model_number', fontsize=7)
-            axes[i].tick_params(labelsize=6)
-            # Profiles of interests
-            for prof_num in profiles_of_interest:
-                p_temp = l.profile_data(profile_number=prof_num)
-                axes[i].axvline(p_temp.model_number, color='red', alpha=0.5, lw=1)
-                axes[i].text(p_temp.model_number, axes[i].get_ylim()[1], str(prof_num), fontsize=7, color='red')
-        except Exception as e:
-            axes[i].set_title(f'{name}\n(error)', fontsize=7, color='red')
-
-    for j in range(len(section), len(axes)):
-        axes[j].set_visible(False)
-
-    fig.suptitle(f'History Variables: Section {sec_num + 1}/{len(sections)}', fontsize=10)
-    plt.tight_layout()
-    plt.savefig(f'model_number_{sec_num + 1}.png', dpi=150, bbox_inches='tight')
-    plt.show()
-#+end_src
-
-#+RESULTS:
-[[file:./.ob-jupyter/79d740a48669ed7444cbf8f6b477dd1a6794fbe2.png]]
 * Specific Profile/History plots
 ** (Profile) Internal Structure: Log T by log Rho
 #+begin_src jupyter-python
@@ -327,19 +337,6 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 plt.savefig('Evolution.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
-* Filters
-#+begin_src jupyter-python
-# HR mask for 12M_sun
-Amask = (h.log_Teff >= 4) & (h.log_Teff <=4.4) & (h.log_L <= 4.2)
-Bmask = (h.log_Teff >= 3.7) & (h.log_Teff <= 4) & (h.log_L <= 4)
-mask = Amask + Bmask
-
-# ZAMS
-zams = zams[zams['logL'] != '...']
-zams = zams[zams['logT'] != '...']
-zams['logL'] = zams['logL'].astype(float)
-zams['logT'] = zams['logT'].astype(float)
-#+end_src
 
 #+RESULTS:
 
@@ -373,7 +370,7 @@ short_labels = {
     #14: '',
     #15: '',
     #17: '',
-    27: 'He-burning',
+    27: 'Adv-burning',
 }
 
 offsets = {
@@ -417,7 +414,7 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/2e462f54534ce3157c81ae33faf9ecfa401fb539.png]]
+[[file:./.ob-jupyter/42d23d979b5e4c2eeba8176e813fdcc9c4f1b9bf.png]]
 * Profiles of Interest
 ** Constants
 #+begin_src jupyter-python
@@ -458,7 +455,7 @@ def get_p_age(prof_num):
 
 #+RESULTS:
 
-** Q1 & Q2
+** Q1 & Q2 Power Sources: nuclear burning rates + fuel abundances
 #+begin_src jupyter-python
 # Q1 Q2, Power Sources: nuclear burning rates + fuel abundances
 fig, axes = plt.subplots(4, 3, figsize=(16, 18))
@@ -561,7 +558,7 @@ plt.show()
 #+RESULTS:
 [[file:./.ob-jupyter/a56544a6285408a415c8425b80b857e0b2c336b2.png]]
 
-** Q4 Convective
+** Q4 Convective via Log_D_conv
 #+begin_src jupyter-python
 fig, axes = plt.subplots(4, 2, figsize=(14, 18))
 
@@ -606,6 +603,98 @@ plt.show()
 #+RESULTS:
 [[file:./.ob-jupyter/661212cd71b26860e2f06ae7ee1f5f672643fc25.png]]
 
+** Q4 Convection via Kipper
+#+begin_src jupyter-python
+import sys
+sys.path.insert(0, './mkipp')
+import mkipp
+import kipp_data
+import mesa_data as mkipp_mesa
+from matplotlib.patches import PathPatch
+
+LOGS_DIR  = './MESA-Web_Job_04012666280'
+HIST_PATH = f'{LOGS_DIR}/history.data'
+
+def dconv_extractor(identifier, log10_on_data, prof, return_data_columns=False):
+    if return_data_columns:
+        return ['log_D_conv']
+    data = prof.get('log_D_conv')
+    # mask sentinel values
+    data = np.where(data < -10, 0, data)
+    return data
+
+fig, ax = plt.subplots(figsize=(12, 6))
+kp = mkipp.kipp_plot(mkipp.Kipp_Args(
+    logs_dirs     = [LOGS_DIR],
+    history_paths = [HIST_PATH],
+    identifier    = 'log_D_conv',
+    extractor     = dconv_extractor,
+    log10_on_data = False,
+    show_conv     = False,
+    show_semi     = False,
+    show_over     = False,
+    core_masses   = ['He', 'C', 'O'],
+    decorate_plot = False,
+    save_file     = False,
+), axis=ax)
+
+cbar = fig.colorbar(kp.contour_plot, ax=ax, pad=0.02)
+cbar.set_label(r'$\log_{10} D_\mathrm{conv}$ (cm² s⁻¹)', fontsize=10)
+
+ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
+
+profile_markers = {
+    1:  (1,    'Pre-MS',  'tab:purple'),
+    7:  (275,  'MS',      'tab:blue'),
+    11: (362,  'TAMS',    'tab:green'),
+    27: (1000, 'RSG',     'tab:red'),
+}
+
+ax.set_xlabel('Model Number', fontsize=11)
+ax.set_ylabel(r'Enclosed Mass ($M_\odot$)', fontsize=11)
+
+fig.canvas.draw()
+ymin, ymax = ax.get_ylim()
+xmin, xmax = ax.get_xlim()
+for prof_num, (mn, plabel, pcolor) in profile_markers.items():
+    ax.axvline(mn, color=pcolor, lw=1.5, ls='-', alpha=0.9, zorder=5)
+    ax.text(mn, ymax * 0.92, plabel,
+            fontsize=8, color=pcolor, ha='center', va='top', zorder=6,
+            bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1))
+
+legend_handles = [
+    mpatches.Patch(color='black',      label='Stellar surface (mass loss)'),
+    mpatches.Patch(color='blue',       label='He core boundary',  linestyle='--'),
+    mpatches.Patch(color='red',        label='C core boundary',   linestyle='--'),
+    mpatches.Patch(color='green',      label='O core boundary',   linestyle='--'),
+    # separator then profile markers
+    mpatches.Patch(color='tab:purple', label='P1:  Pre-MS'),
+    mpatches.Patch(color='tab:blue',   label='P7:  Main Sequence'),
+    mpatches.Patch(color='tab:green',  label='P11: TAMS'),
+    mpatches.Patch(color='tab:red',    label='P27: Red Supergiant'),
+]
+ax.legend(handles=legend_handles, fontsize=8, loc='upper left',
+          framealpha=0.85, title='Legend', title_fontsize=9)
+ax.legend(handles=legend_handles, fontsize=8, loc='upper left', framealpha=0.8)
+
+plt.tight_layout()
+plt.savefig('q4_kipp_dconv.png', dpi=150, bbox_inches='tight')
+plt.show()
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+: <>:37: SyntaxWarning: invalid escape sequence '\o'
+: <>:37: SyntaxWarning: invalid escape sequence '\o'
+: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1786612042.py:37: SyntaxWarning: invalid escape sequence '\o'
+:   ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
+: ./MESA-Web_Job_04012666280 ['./MESA-Web_Job_04012666280']
+: Reading profile data
+: Reading history data
+: Constructing mixing regions
+: there are 0 mixing zones
+[[file:./.ob-jupyter/e8bab427ff6f51d01455157c012d128f64540885.png]]
+:END:
 ** Q5 Mass Loss
 #+begin_src jupyter-python
 fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
@@ -771,95 +860,3 @@ plt.show()
 #+RESULTS:
 [[file:./.ob-jupyter/a6799c6b0e8b9d7d58850df7b8eb997ddc6d4153.png]]
 
-** Q4 Kipper plugin
-#+begin_src jupyter-python
-import sys
-sys.path.insert(0, './mkipp')
-import mkipp
-import kipp_data
-import mesa_data as mkipp_mesa
-from matplotlib.patches import PathPatch
-
-LOGS_DIR  = './MESA-Web_Job_04012666280'
-HIST_PATH = f'{LOGS_DIR}/history.data'
-
-def dconv_extractor(identifier, log10_on_data, prof, return_data_columns=False):
-    if return_data_columns:
-        return ['log_D_conv']
-    data = prof.get('log_D_conv')
-    # mask sentinel values
-    data = np.where(data < -10, 0, data)
-    return data
-
-fig, ax = plt.subplots(figsize=(12, 6))
-kp = mkipp.kipp_plot(mkipp.Kipp_Args(
-    logs_dirs     = [LOGS_DIR],
-    history_paths = [HIST_PATH],
-    identifier    = 'log_D_conv',
-    extractor     = dconv_extractor,
-    log10_on_data = False,
-    show_conv     = False,
-    show_semi     = False,
-    show_over     = False,
-    core_masses   = ['He', 'C', 'O'],
-    decorate_plot = False,
-    save_file     = False,
-), axis=ax)
-
-cbar = fig.colorbar(kp.contour_plot, ax=ax, pad=0.02)
-cbar.set_label(r'$\log_{10} D_\mathrm{conv}$ (cm² s⁻¹)', fontsize=10)
-
-ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
-
-profile_markers = {
-    1:  (1,    'Pre-MS',  'tab:purple'),
-    7:  (275,  'MS',      'tab:blue'),
-    11: (362,  'TAMS',    'tab:green'),
-    27: (1000, 'RSG',     'tab:red'),
-}
-
-ax.set_xlabel('Model Number', fontsize=11)
-ax.set_ylabel(r'Enclosed Mass ($M_\odot$)', fontsize=11)
-
-fig.canvas.draw()
-ymin, ymax = ax.get_ylim()
-xmin, xmax = ax.get_xlim()
-for prof_num, (mn, plabel, pcolor) in profile_markers.items():
-    ax.axvline(mn, color=pcolor, lw=1.5, ls='-', alpha=0.9, zorder=5)
-    ax.text(mn, ymax * 0.92, plabel,
-            fontsize=8, color=pcolor, ha='center', va='top', zorder=6,
-            bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1))
-
-legend_handles = [
-    mpatches.Patch(color='black',      label='Stellar surface (mass loss)'),
-    mpatches.Patch(color='blue',       label='He core boundary',  linestyle='--'),
-    mpatches.Patch(color='red',        label='C core boundary',   linestyle='--'),
-    mpatches.Patch(color='green',      label='O core boundary',   linestyle='--'),
-    # separator then profile markers
-    mpatches.Patch(color='tab:purple', label='P1:  Pre-MS'),
-    mpatches.Patch(color='tab:blue',   label='P7:  Main Sequence'),
-    mpatches.Patch(color='tab:green',  label='P11: TAMS'),
-    mpatches.Patch(color='tab:red',    label='P27: Red Supergiant'),
-]
-ax.legend(handles=legend_handles, fontsize=8, loc='upper left',
-          framealpha=0.85, title='Legend', title_fontsize=9)
-ax.legend(handles=legend_handles, fontsize=8, loc='upper left', framealpha=0.8)
-
-plt.tight_layout()
-plt.savefig('q4_kipp_dconv.png', dpi=150, bbox_inches='tight')
-plt.show()
-#+end_src
-
-#+RESULTS:
-:RESULTS:
-: <>:37: SyntaxWarning: invalid escape sequence '\o'
-: <>:37: SyntaxWarning: invalid escape sequence '\o'
-: /var/folders/bh/rwx873hn4fz5z3qnx131y9fc0000gn/T/ipykernel_58536/1786612042.py:37: SyntaxWarning: invalid escape sequence '\o'
-:   ax.set_title('Q4: Convective Structure over Evolution (12 $M_\odot$)', fontsize=12, fontweight='bold')
-: ./MESA-Web_Job_04012666280 ['./MESA-Web_Job_04012666280']
-: Reading profile data
-: Reading history data
-: Constructing mixing regions
-: there are 0 mixing zones
-[[file:./.ob-jupyter/e8bab427ff6f51d01455157c012d128f64540885.png]]
-:END:
