@@ -62,6 +62,45 @@ zams['logT'] = zams['logT'].astype(float)
 
 #+RESULTS:
 
+** Constants
+#+begin_src jupyter-python
+G        = 6.674e-8
+k_B      = 1.381e-16
+m_H      = 1.673e-24
+sigma_SB = 5.670e-5
+M_sun    = 1.989e33
+R_sun    = 6.957e10#cm
+mu      = 0.62 # Fully ionized H/He approx
+mu_e    = 1.15
+a_rad   = 7.566e-15
+c_light = 3e10
+hbar    = 1.055e-27
+m_e     = 9.109e-28
+
+selected = {
+    1:  ('Pre-MS Contraction', 'tab:purple'),
+    7:  ('Main Sequence',      'tab:blue'),
+    11: ('TAMS',               'tab:green'),
+    27: ('He-burning / RSG',   'tab:red'),
+}
+
+burning_lines = {
+    'H burning (pp/CNO)': (7.0,  'tab:blue',   '-'),
+    'He burning (3α)':    (8.0,  'tab:orange',  '-'),
+    'C burning':          (8.6,  'tab:green',   '-'),
+}
+
+virial_profiles = {7: ('Main Sequence', 'tab:blue'), 27: ('He-burning / RSG', 'tab:red')}
+
+def get_p_age(prof_num):
+    p   = l.profile_data(profile_number=prof_num)
+    mn  = p.model_number
+    age = h.star_age[h.model_number == mn][0]
+    return p, age
+#+end_src
+
+#+RESULTS:
+
 * Bulk
 ** historyVars by star_age
 #+begin_src jupyter-python
@@ -338,7 +377,7 @@ plt.show()
 
 * Hertzsprung-Russell Diagram
 #+begin_src jupyter-python
-fig, ax = plt.subplots(figsize=(16, 12))
+fig, ax = plt.subplots(figsize=(14, 7))
 ax.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1) # ZAMS reference line
 #plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA') # MESA output
 
@@ -413,47 +452,8 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/8df0ddc993b5baa4122264780ff72a768d5e3b4a.png]]
+[[file:./.ob-jupyter/11f1ae0a0d6dc0eb75fb00c233a53553c774f523.png]]
 * Profiles of Interest
-** Constants
-#+begin_src jupyter-python
-G        = 6.674e-8
-k_B      = 1.381e-16
-m_H      = 1.673e-24
-sigma_SB = 5.670e-5
-M_sun    = 1.989e33
-R_sun    = 6.957e10#cm
-mu      = 0.62 # Fully ionized H/He approx
-mu_e    = 1.15
-a_rad   = 7.566e-15
-c_light = 3e10
-hbar    = 1.055e-27
-m_e     = 9.109e-28
-
-selected = {
-    1:  ('Pre-MS Contraction', 'tab:purple'),
-    7:  ('Main Sequence',      'tab:blue'),
-    11: ('TAMS',               'tab:green'),
-    27: ('He-burning / RSG',   'tab:red'),
-}
-
-burning_lines = {
-    'H burning (pp/CNO)': (7.0,  'tab:blue',   '-'),
-    'He burning (3α)':    (8.0,  'tab:orange',  '-'),
-    'C burning':          (8.6,  'tab:green',   '-'),
-}
-
-virial_profiles = {7: ('Main Sequence', 'tab:blue'), 27: ('He-burning / RSG', 'tab:red')}
-
-def get_p_age(prof_num):
-    p   = l.profile_data(profile_number=prof_num)
-    mn  = p.model_number
-    age = h.star_age[h.model_number == mn][0]
-    return p, age
-#+end_src
-
-#+RESULTS:
-
 ** Q1 & Q2 Power Sources: nuclear burning rates + fuel abundances
 #+begin_src jupyter-python
 # Q1 Q2, Power Sources: nuclear burning rates + fuel abundances
@@ -566,6 +566,7 @@ for row, (prof_num, (label, color)) in enumerate(selected.items()):
 
     # Schwarzschild criterion
     ax = axes[row, 0]
+    p.gradr = np.clip(p.gradr, -999, 5)
     ax.plot(p.mass, p.gradr, color=color,   lw=1.5, label=r'$\nabla_\mathrm{rad}$')
     ax.plot(p.mass, p.grada, color='black', lw=1.5, ls='--', label=r'$\nabla_\mathrm{ad}$')
     ax.fill_between(p.mass, p.gradr, p.grada,
@@ -600,7 +601,7 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/661212cd71b26860e2f06ae7ee1f5f672643fc25.png]]
+[[file:./.ob-jupyter/10fd9177eef486936ab9167884635a34ec83263e.png]]
 
 ** Q4 Convection via Kipper
 #+begin_src jupyter-python
@@ -803,8 +804,8 @@ for ax, (prof_num, (label, color)) in zip(axes, virial_profiles.items()):
     m_g = p.mass * M_sun
     r_cm = p.radius * R_sun
 
-    # dm for each shell (mass is outermost → innermost in MESA, so flip)
-    # MESA profiles: index 0 = surface, index -1 = center → reverse for integration
+    # dm for each shell - flip
+    # MESA profiles: index 0 = surface, index -1 = center to reverse for integration
     m_g_rev   = m_g[::-1]
     r_rev     = r_cm[::-1]
     dm        = np.diff(m_g_rev)
@@ -815,7 +816,7 @@ for ax, (prof_num, (label, color)) in zip(axes, virial_profiles.items()):
     dE_grav   = -G * m_mid / r_mid * dm
     E_grav    = np.sum(dE_grav)
 
-    # Thermal energy: u (erg/g) is specific internal energy — MESA 'energy' column
+    # Thermal energy: u (erg/g) is specific internal energy
     energy_rev = p.energy[::-1]
     u_mid      = 0.5 * (energy_rev[:-1] + energy_rev[1:])
     dE_therm   = u_mid * dm
