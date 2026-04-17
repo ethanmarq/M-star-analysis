@@ -46,10 +46,6 @@ profiles_of_interest = {
 print(f'history.profile columns: {h.bulk_names}\n\n ZAMS columns: {zams.columns}\n\n specfiic profile columns {p.bulk_names}')
 #+end_src
 
-
-#+begin_src jupyter-python
-#+end_src
-
 ** Filters
 #+begin_src jupyter-python
 # HR mask for 12M_sun
@@ -342,16 +338,10 @@ plt.show()
 
 * Hertzsprung-Russell Diagram
 #+begin_src jupyter-python
-plt.figure(figsize=(16, 12))
+fig, ax = plt.subplots(figsize=(16, 12))
+ax.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1) # ZAMS reference line
+#plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA') # MESA output
 
-# ZAMS reference line
-plt.plot(zams['logT'], zams['logL'], 'b--', label='ZAMS (Pecaut & Mamajek 2013)', zorder=1)
-
-# MESA output
-plt.plot(h.log_Teff, h.log_L, color='tab:blue', lw=2, label='12M_sun MESA')
-#plt.plot(h.log_Teff[mask], h.log_L[mask], color='red', label='12M_sun MESA Main Sequence')
-
-#
 profiles_of_interest = {
     1: '1',
     7: '275',
@@ -384,6 +374,15 @@ offsets = {
     #17: (30, 20),
     27: (-30, 25),
 }
+
+dt = np.diff(h.star_age)
+dt = np.append(dt, dt[-1])
+log_dt = np.log10(dt + 1)
+
+sc = ax.scatter(h.log_Teff, h.log_L, c=log_dt, cmap='plasma', s=5, zorder=3)
+cbar = plt.colorbar(sc, ax=ax)
+cbar.set_label('log$_{10}$(years per model step)', fontsize=10)
+
 for prof_num, model_str in profiles_of_interest.items():
     model_num = int(model_str)
     idx = np.where(h.model_number == model_num)[0]
@@ -392,8 +391,8 @@ for prof_num, model_str in profiles_of_interest.items():
     idx = idx[0]
     x = h.log_Teff[idx]
     y = h.log_L[idx]
-    plt.scatter(x, y, color='red', s=10, zorder=5)
-    plt.annotate(
+    ax.scatter(x, y, color='red', s=10, zorder=5)
+    ax.annotate(
         short_labels[prof_num],
         xy=(x, y),
         xytext=offsets[prof_num],
@@ -402,19 +401,19 @@ for prof_num, model_str in profiles_of_interest.items():
         arrowprops=dict(arrowstyle='-', color='gray', lw=0.5)
     )
 
-plt.gca().invert_xaxis()  # Hotter stars on the left
-plt.xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
-plt.ylabel(r'$\log_{10}(L / L_{\odot})$')
-plt.title('Hertzsprung-Russell Diagram')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.6)
+ax.invert_xaxis()  # Hotter stars on the left
+ax.set_xlabel(r'$\log_{10}(T_{\rm eff} [ {\rm K}])$')
+ax.set_ylabel(r'$\log_{10}(L / L_{\odot})$')
+ax.set_title('Hertzsprung-Russell Diagram')
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.6)
 
 plt.savefig('hr_diagram.png', dpi=150, bbox_inches='tight')
 plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/42d23d979b5e4c2eeba8176e813fdcc9c4f1b9bf.png]]
+[[file:./.ob-jupyter/8df0ddc993b5baa4122264780ff72a768d5e3b4a.png]]
 * Profiles of Interest
 ** Constants
 #+begin_src jupyter-python
